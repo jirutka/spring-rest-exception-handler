@@ -33,9 +33,9 @@ public class MethodArgumentNotValidResponseFactory extends LocalizableErrorMessa
     }
 
     @Override
-    public ValidationErrorMessage createErrorMessage(MethodArgumentNotValidException ex, WebRequest req) {
+    public ValidationErrorMessage createBody(MethodArgumentNotValidException ex, WebRequest req) {
 
-        ErrorMessage tmpl = super.createErrorMessage(ex, req);
+        ErrorMessage tmpl = super.createBody(ex, req);
         ValidationErrorMessage msg = new ValidationErrorMessage(tmpl);
 
         BindingResult result = ex.getBindingResult();

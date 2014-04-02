@@ -15,7 +15,7 @@
  */
 package cz.jirutka.spring.web.servlet.exhandler;
 
-import cz.jirutka.spring.web.servlet.exhandler.factories.AbstractErrorMessageFactory;
+import cz.jirutka.spring.web.servlet.exhandler.factories.AbstractErrorResponseFactory;
 import cz.jirutka.spring.web.servlet.exhandler.factories.ErrorResponseFactory;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class PluggableExceptionHandler {
         addResponseFactory(determineTargetType(factory), factory);
     }
 
-    public <E extends Exception> void addResponseFactory(AbstractErrorMessageFactory<E> factory) {
+    public <E extends Exception> void addResponseFactory(AbstractErrorResponseFactory<E, ?> factory) {
         addResponseFactory(factory.getExceptionClass(), factory);
     }
 
@@ -66,13 +66,13 @@ public class PluggableExceptionHandler {
     @ExceptionHandler
     protected ResponseEntity<?> handleException(Exception ex, WebRequest request) {
 
-        ErrorResponseFactory factory = findErrorMessageFactory(ex.getClass());
+        ErrorResponseFactory factory = findErrorResponseFactory(ex.getClass());
 
         LOG.debug("Handling exception {} with response factory: {}", ex.getClass().getName(), factory);
         return factory.createErrorResponse(ex, request);
     }
 
-    protected ErrorResponseFactory findErrorMessageFactory(Class<? extends Exception> exceptionClass) {
+    protected ErrorResponseFactory findErrorResponseFactory(Class<? extends Exception> exceptionClass) {
 
         for (Class clazz = exceptionClass; clazz != Throwable.class; clazz = clazz.getSuperclass()) {
             if (factories.containsKey(clazz)) {

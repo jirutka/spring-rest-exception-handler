@@ -23,26 +23,26 @@ import spock.lang.Specification
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST
 
-class AbstractErrorMessageFactoryTest extends Specification {
+class AbstractErrorResponseFactoryTest extends Specification {
 
     def 'determine exception class from generic type'() {
         given:
-            def factory = new AbstractErrorMessageFactory<IOException>(BAD_REQUEST) {
-                ErrorMessage createErrorMessage(IOException ex, WebRequest req) { null}
+            def factory = new AbstractErrorResponseFactory<IOException, ErrorMessage>(BAD_REQUEST) {
+                ErrorMessage createBody(IOException ex, WebRequest req) { null}
             }
         expect:
             factory.exceptionClass == IOException
     }
 
-    def 'create error response using createHeaders, createErrorMessage and getStatus methods'() {
+    def 'create error response using createHeaders, createBody and getStatus methods'() {
         setup:
             def ex = new IOException()
             def req = Mock(WebRequest)
             def expected = new ResponseEntity(new ErrorMessage(), new HttpHeaders(date: 123), BAD_REQUEST)
         and:
-            def factory = Spy(AbstractErrorMessageFactory, constructorArgs: [IOException, expected.statusCode]) {
+            def factory = Spy(AbstractErrorResponseFactory, constructorArgs: [IOException, expected.statusCode]) {
                 createHeaders(ex, req) >> expected.headers
-                createErrorMessage(ex, req) >> expected.body
+                createBody(ex, req) >> expected.body
             }
         when:
             def actual = factory.createErrorResponse(ex, req)

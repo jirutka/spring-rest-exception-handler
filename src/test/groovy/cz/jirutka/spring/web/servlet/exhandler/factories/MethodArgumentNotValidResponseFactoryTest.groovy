@@ -44,7 +44,7 @@ class MethodArgumentNotValidResponseFactoryTest extends Specification {
                     .build()
             def exception = new MethodArgumentNotValidException(null, bindingResult)
         when:
-            def actual = factory.createErrorMessage(exception, request) as ValidationErrorMessage
+            def actual = factory.createBody(exception, request) as ValidationErrorMessage
         then:
             actual.errors == expected.errors
     }

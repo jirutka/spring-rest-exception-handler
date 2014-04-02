@@ -33,7 +33,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-public class LocalizableErrorMessageFactory<E extends Exception> extends AbstractErrorMessageFactory<E> {
+public class LocalizableErrorMessageFactory<E extends Exception> extends AbstractErrorResponseFactory<E, ErrorMessage> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalizableErrorMessageFactory.class);
 
@@ -61,7 +61,7 @@ public class LocalizableErrorMessageFactory<E extends Exception> extends Abstrac
     }
 
 
-    public ErrorMessage createErrorMessage(E ex, WebRequest req) {
+    public ErrorMessage createBody(E ex, WebRequest req) {
 
         ErrorMessage m = new ErrorMessage();
         m.setType(URI.create(resolveMessage(TYPE_KEY, ex, req)));

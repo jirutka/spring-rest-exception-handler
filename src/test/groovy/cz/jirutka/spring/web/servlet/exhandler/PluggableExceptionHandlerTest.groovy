@@ -15,7 +15,7 @@
  */
 package cz.jirutka.spring.web.servlet.exhandler
 
-import cz.jirutka.spring.web.servlet.exhandler.factories.AbstractErrorMessageFactory
+import cz.jirutka.spring.web.servlet.exhandler.factories.AbstractErrorResponseFactory
 import cz.jirutka.spring.web.servlet.exhandler.factories.ErrorResponseFactory
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage
 import org.springframework.http.ResponseEntity
@@ -48,13 +48,13 @@ class PluggableExceptionHandlerTest extends Specification {
             handler.factories.get(NumberFormatException) == factory
     }
 
-    def 'add instance of AbstractErrorMessageFactory'() {
+    def 'add instance of AbstractErrorResponseFactory'() {
         setup:
-            def factory = new AbstractErrorMessageFactory<Exception>(IOException, BAD_REQUEST) {
-                ErrorMessage createErrorMessage(Exception ex, WebRequest req) { null }
+            def factory = new AbstractErrorResponseFactory<Exception, ErrorMessage>(IOException, BAD_REQUEST) {
+                ErrorMessage createBody(Exception ex, WebRequest req) { null }
             }
         when:
-            handler.addResponseFactory(factory as AbstractErrorMessageFactory)
+            handler.addResponseFactory(factory as AbstractErrorResponseFactory)
         then:
            handler.factories.get(IOException) == factory
     }

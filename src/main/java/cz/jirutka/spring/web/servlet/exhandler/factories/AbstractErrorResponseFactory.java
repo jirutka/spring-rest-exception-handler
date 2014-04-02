@@ -15,7 +15,6 @@
  */
 package cz.jirutka.spring.web.servlet.exhandler.factories;
 
-import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,21 +25,21 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.lang.reflect.TypeVariable;
 
-public abstract class AbstractErrorMessageFactory<E extends Exception> implements ErrorResponseFactory<E, ErrorMessage> {
+public abstract class AbstractErrorResponseFactory<E extends Exception, T> implements ErrorResponseFactory<E, T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractErrorMessageFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractErrorResponseFactory.class);
 
     private final Class<E> exceptionClass;
     private final HttpStatus status;
 
 
-    protected AbstractErrorMessageFactory(HttpStatus status) {
+    protected AbstractErrorResponseFactory(HttpStatus status) {
         this.exceptionClass = determineTargetType();
         this.status = status;
         LOG.trace("Determined generic exception type: {}", exceptionClass.getName());
     }
 
-    protected AbstractErrorMessageFactory(Class<E> exceptionClass, HttpStatus status) {
+    protected AbstractErrorResponseFactory(Class<E> exceptionClass, HttpStatus status) {
         this.exceptionClass = exceptionClass;
         this.status = status;
     }
@@ -48,14 +47,14 @@ public abstract class AbstractErrorMessageFactory<E extends Exception> implement
 
     ////// Abstract methods //////
 
-    public abstract ErrorMessage createErrorMessage(E ex, WebRequest req);
+    public abstract T createBody(E ex, WebRequest req);
 
 
     ////// Template methods //////
 
-    public ResponseEntity<ErrorMessage> createErrorResponse(E ex, WebRequest req) {
+    public ResponseEntity<T> createErrorResponse(E ex, WebRequest req) {
 
-        ErrorMessage body = createErrorMessage(ex, req);
+        T body = createBody(ex, req);
         HttpHeaders headers = createHeaders(ex, req);
 
         return new ResponseEntity<>(body, headers, getStatus());
@@ -76,7 +75,7 @@ public abstract class AbstractErrorMessageFactory<E extends Exception> implement
 
     @SuppressWarnings("unchecked")
     private Class<E> determineTargetType() {
-        TypeVariable<?> typeVar = AbstractErrorMessageFactory.class.getTypeParameters()[0];
+        TypeVariable<?> typeVar = AbstractErrorResponseFactory.class.getTypeParameters()[0];
         return (Class<E>) TypeUtils.getRawType(typeVar, this.getClass());
     }
 }

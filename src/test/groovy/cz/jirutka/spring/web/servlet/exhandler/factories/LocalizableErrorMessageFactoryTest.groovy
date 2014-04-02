@@ -54,7 +54,7 @@ class LocalizableErrorMessageFactoryTest extends Specification {
                     detail: "You're screwed!",
                     instance: new URI('http://example.org/type-mismatch'))
         when:
-            def actual = factory.createErrorMessage(exception, request)
+            def actual = factory.createBody(exception, request)
         then:
             ['type', 'title', 'detail', 'instance'].each { key ->
                 1 * factory.resolveMessage(key, exception, request) >> expected.properties[key].toString()
