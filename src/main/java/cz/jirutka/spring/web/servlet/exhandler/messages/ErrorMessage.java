@@ -16,16 +16,17 @@
 package cz.jirutka.spring.web.servlet.exhandler.messages;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.springframework.http.HttpStatus;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.net.URI;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 /**
  * @see <a href="http://tools.ietf.org/html/draft-nottingham-http-problem-06">draft-nottingham-http-problem-06</a>
@@ -33,8 +34,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 @Data
 @NoArgsConstructor
 @ToString(exclude="detail")
-@JsonInclude(NON_EMPTY)
-@XmlRootElement(name="problem")
+@JsonInclude(Include.NON_EMPTY) //for Jackson 2.x
+@JsonSerialize(include=Inclusion.NON_EMPTY) //for Jackson 1.x
+@XmlRootElement(name="problem") //for JAXB
 public class ErrorMessage implements Serializable {
 
     private static final long serialVersionUID = 1L;

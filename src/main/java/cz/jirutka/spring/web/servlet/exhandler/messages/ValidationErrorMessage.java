@@ -16,9 +16,12 @@
 package cz.jirutka.spring.web.servlet.exhandler.messages;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
@@ -29,8 +32,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=true)
-@JsonInclude(NON_EMPTY)
-@XmlRootElement(name="problem")
+@JsonInclude(Include.NON_EMPTY) //for Jackson 2.x
+@JsonSerialize(include= Inclusion.NON_EMPTY) //for Jackson 1.x
+@XmlRootElement(name="problem") //for JAXB
 public class ValidationErrorMessage extends ErrorMessage {
 
     private static final long serialVersionUID = 1L;
