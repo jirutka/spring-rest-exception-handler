@@ -48,13 +48,13 @@ public class PluggableExceptionHandler {
 
 
     public <E extends Exception>
-            void addResponseFactory(Class<? extends E> exceptionClass, ErrorResponseFactory<E> factory) {
+            void addResponseFactory(Class<? extends E> exceptionClass, ErrorResponseFactory<E, ?> factory) {
 
         LOG.debug("Registering factory for {}: {}", exceptionClass.getName(), factory);
         factories.put(exceptionClass, factory);
     }
 
-    public <E extends Exception> void addResponseFactory(ErrorResponseFactory<E> factory) {
+    public <E extends Exception> void addResponseFactory(ErrorResponseFactory<E, ?> factory) {
         addResponseFactory(determineTargetType(factory), factory);
     }
 
@@ -84,7 +84,7 @@ public class PluggableExceptionHandler {
 
 
     @SuppressWarnings("unchecked")
-    <T extends Exception> Class<T> determineTargetType(ErrorResponseFactory<T> factory) {
+    <T extends Exception> Class<T> determineTargetType(ErrorResponseFactory<T, ?> factory) {
 
         TypeVariable<?> typeVar = ErrorResponseFactory.class.getTypeParameters()[0];
         return (Class<T>) TypeUtils.getRawType(typeVar, factory.getClass());

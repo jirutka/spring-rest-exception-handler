@@ -26,7 +26,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.lang.reflect.TypeVariable;
 
-public abstract class AbstractErrorMessageFactory<E extends Exception> implements ErrorResponseFactory<E> {
+public abstract class AbstractErrorMessageFactory<E extends Exception> implements ErrorResponseFactory<E, ErrorMessage> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractErrorMessageFactory.class);
 

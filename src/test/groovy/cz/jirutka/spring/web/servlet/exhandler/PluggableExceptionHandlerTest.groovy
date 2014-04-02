@@ -39,7 +39,7 @@ class PluggableExceptionHandlerTest extends Specification {
 
     def 'add instance of ErrorResponseFactory and determine exception type using generics'() {
         setup:
-            def factory = new ErrorResponseFactory<NumberFormatException>() {
+            def factory = new ErrorResponseFactory<NumberFormatException, ?>() {
                 ResponseEntity<?> createErrorResponse(NumberFormatException ex, WebRequest req) { }
             }
         when:

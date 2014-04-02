@@ -18,7 +18,7 @@ package cz.jirutka.spring.web.servlet.exhandler.factories;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
-public interface ErrorResponseFactory<E extends Exception> {
+public interface ErrorResponseFactory<E extends Exception, T> {
 
     /**
      * Creates a {@link org.springframework.http.ResponseEntity} from the given exception.
@@ -27,5 +27,5 @@ public interface ErrorResponseFactory<E extends Exception> {
      * @param request The current request.
      * @return A response entity.
      */
-    ResponseEntity<?> createErrorResponse(E ex, WebRequest request);
+    ResponseEntity<T> createErrorResponse(E ex, WebRequest request);
 }

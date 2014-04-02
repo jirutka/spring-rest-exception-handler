@@ -23,7 +23,7 @@ import org.springframework.web.context.request.WebRequest;
  * Simple implementation of {@link ErrorResponseFactory} that returns response
  * with status code and no content.
  */
-public class StatusErrorResponseFactory implements ErrorResponseFactory<Exception> {
+public class StatusErrorResponseFactory implements ErrorResponseFactory<Exception, Void> {
 
     private final HttpStatus status;
 
@@ -32,7 +32,7 @@ public class StatusErrorResponseFactory implements ErrorResponseFactory<Exceptio
         this.status = status;
     }
 
-    public ResponseEntity<?> createErrorResponse(Exception ex, WebRequest request) {
+    public ResponseEntity<Void> createErrorResponse(Exception ex, WebRequest request) {
         return new ResponseEntity<>(status);
     }
 }
