@@ -17,11 +17,12 @@ package cz.jirutka.spring.web.servlet.exhandler.factories;
 
 import cz.jirutka.spring.web.servlet.exhandler.interpolators.MessageInterpolator;
 import cz.jirutka.spring.web.servlet.exhandler.interpolators.NoOpMessageInterpolator;
+import cz.jirutka.spring.web.servlet.exhandler.interpolators.SpelMessageInterpolator;
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.WebRequest;
@@ -33,11 +34,10 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-public class LocalizableErrorMessageFactory<E extends Exception> extends AbstractErrorResponseFactory<E, ErrorMessage> {
+public class LocalizableErrorMessageFactory<E extends Exception>
+        extends AbstractErrorResponseFactory<E, ErrorMessage> implements MessageSourceAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalizableErrorMessageFactory.class);
-
-    private static final NoOpMessageInterpolator DEFAULT_INTERPOLATOR = new NoOpMessageInterpolator();
 
     protected static final String
             DEFAULT_PREFIX = "default",
@@ -46,9 +46,9 @@ public class LocalizableErrorMessageFactory<E extends Exception> extends Abstrac
             DETAIL_KEY = "detail",
             INSTANCE_KEY = "instance";
 
-
     private MessageSource messageSource;
-    private MessageInterpolator interpolator = DEFAULT_INTERPOLATOR;
+
+    private MessageInterpolator interpolator = new SpelMessageInterpolator();
 
 
     public LocalizableErrorMessageFactory(HttpStatus status) {
@@ -108,13 +108,12 @@ public class LocalizableErrorMessageFactory<E extends Exception> extends Abstrac
 
     ////// Accessors //////
 
-    @Required
     public void setMessageSource(MessageSource messageSource) {
         Assert.notNull(messageSource, "messageSource must not be null");
         this.messageSource = messageSource;
     }
 
     public void setInterpolator(MessageInterpolator interpolator) {
-        this.interpolator = defaultIfNull(interpolator, DEFAULT_INTERPOLATOR);
+        this.interpolator = defaultIfNull(interpolator, new NoOpMessageInterpolator());
     }
 }
