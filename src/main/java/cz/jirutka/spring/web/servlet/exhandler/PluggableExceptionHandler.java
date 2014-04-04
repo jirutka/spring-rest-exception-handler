@@ -17,6 +17,7 @@ package cz.jirutka.spring.web.servlet.exhandler;
 
 import cz.jirutka.spring.web.servlet.exhandler.factories.AbstractErrorResponseFactory;
 import cz.jirutka.spring.web.servlet.exhandler.factories.ErrorResponseFactory;
+import cz.jirutka.spring.web.servlet.exhandler.factories.StatusErrorResponseFactory;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +37,8 @@ public class PluggableExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(PluggableExceptionHandler.class);
 
-    private final static ErrorResponseFactory DEFAULT_FACTORY = new ErrorResponseFactory() {
-
-        public ResponseEntity<?> createErrorResponse(Exception ex, WebRequest request) {
-            LOG.warn("No ErrorResponseFactory found for {}", ex.getClass().getName());
-            return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
-        }
-    };
+    private final static ErrorResponseFactory<Exception, Void> DEFAULT_FACTORY =
+            new StatusErrorResponseFactory(INTERNAL_SERVER_ERROR);
 
     private final Map<Class<? extends Exception>, ErrorResponseFactory> factories = new LinkedHashMap<>();
 
@@ -66,13 +62,14 @@ public class PluggableExceptionHandler {
     @ExceptionHandler
     protected ResponseEntity<?> handleException(Exception ex, WebRequest request) {
 
-        ErrorResponseFactory factory = findErrorResponseFactory(ex.getClass());
+        ErrorResponseFactory<Exception, ?> factory = findErrorResponseFactory(ex.getClass());
 
         LOG.debug("Handling exception {} with response factory: {}", ex.getClass().getName(), factory);
         return factory.createErrorResponse(ex, request);
     }
 
-    protected ErrorResponseFactory findErrorResponseFactory(Class<? extends Exception> exceptionClass) {
+    @SuppressWarnings("unchecked")
+    protected ErrorResponseFactory<Exception, ?> findErrorResponseFactory(Class<? extends Exception> exceptionClass) {
 
         for (Class clazz = exceptionClass; clazz != Throwable.class; clazz = clazz.getSuperclass()) {
             if (factories.containsKey(clazz)) {
@@ -84,9 +81,9 @@ public class PluggableExceptionHandler {
 
 
     @SuppressWarnings("unchecked")
-    <T extends Exception> Class<T> determineTargetType(ErrorResponseFactory<T, ?> factory) {
+    <E extends Exception> Class<E> determineTargetType(ErrorResponseFactory<E, ?> factory) {
 
         TypeVariable<?> typeVar = ErrorResponseFactory.class.getTypeParameters()[0];
-        return (Class<T>) TypeUtils.getRawType(typeVar, factory.getClass());
+        return (Class<E>) TypeUtils.getRawType(typeVar, factory.getClass());
     }
 }
