@@ -19,8 +19,6 @@ import cz.jirutka.spring.web.servlet.exhandler.factories.AbstractErrorResponseFa
 import cz.jirutka.spring.web.servlet.exhandler.factories.ErrorResponseFactory
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage
 import org.springframework.http.ResponseEntity
-import org.springframework.mock.web.MockHttpServletRequest
-import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import spock.lang.Specification
 
@@ -28,13 +26,13 @@ import java.security.InvalidParameterException
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST
+import static org.springframework.web.servlet.HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE
 
 class PluggableExceptionHandlerTest extends Specification {
 
-    def request = new MockHttpServletRequest()
-    def webRequest = new ServletWebRequest(request)
+    def request = Mock(WebRequest)
     def handler = new PluggableExceptionHandler()
-
 
 
     def 'add instance of ErrorResponseFactory and determine exception type using generics'() {
@@ -61,7 +59,7 @@ class PluggableExceptionHandlerTest extends Specification {
 
     def 'return 500 when no response factory found'() {
         when:
-            def result = handler.handleException(new IllegalArgumentException(), webRequest)
+            def result = handler.handleException(new IllegalArgumentException(), request)
         then:
             result.statusCode == INTERNAL_SERVER_ERROR
     }
@@ -75,14 +73,20 @@ class PluggableExceptionHandlerTest extends Specification {
             handler.addResponseFactory(IllegalArgumentException, factories[1])
             handler.addResponseFactory(Exception, factories[0])
         when:
-            handler.handleException(exception, webRequest) == expected
+            handler.handleException(exception, request) == expected
         then:
-            1 * factories[factoryNum].createErrorResponse(exception, webRequest) >> expected
-            0 * _
+            1 * factories[factoryNum].createErrorResponse(exception, request) >> expected
         where:
             exception                       | factoryNum
             new NumberFormatException()     | 2
             new InvalidParameterException() | 1
             new FileNotFoundException()     | 0
+    }
+
+    def 'remove PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE from the request'() {
+        when:
+            handler.handleException(new IOException(), request)
+        then:
+            1 * request.removeAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, SCOPE_REQUEST)
     }
 }

@@ -31,6 +31,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.web.context.request.WebRequest.SCOPE_REQUEST;
+import static org.springframework.web.servlet.HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE;
 
 @ControllerAdvice
 public class PluggableExceptionHandler {
@@ -61,6 +63,9 @@ public class PluggableExceptionHandler {
 
     @ExceptionHandler
     protected ResponseEntity<?> handleException(Exception ex, WebRequest request) {
+
+        // See http://stackoverflow.com/a/12979543/2217862
+        request.removeAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, SCOPE_REQUEST);
 
         ErrorResponseFactory<Exception, ?> factory = findErrorResponseFactory(ex.getClass());
 
