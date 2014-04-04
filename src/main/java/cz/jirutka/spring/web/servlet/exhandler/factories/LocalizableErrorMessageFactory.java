@@ -49,7 +49,6 @@ public class LocalizableErrorMessageFactory<E extends Exception> extends Abstrac
 
     private MessageSource messageSource;
     private MessageInterpolator interpolator = DEFAULT_INTERPOLATOR;
-    private boolean fullyQualifiedNames = true;
 
 
     public LocalizableErrorMessageFactory(HttpStatus status) {
@@ -93,7 +92,7 @@ public class LocalizableErrorMessageFactory<E extends Exception> extends Abstrac
 
     protected String getMessage(String key, Locale locale) {
 
-        String prefix = fullyQualifiedNames ? getExceptionClass().getName() : getExceptionClass().getSimpleName();
+        String prefix = getExceptionClass().getName();
 
         String message = messageSource.getMessage(prefix + "." + key, null, null, locale);
         if (message == null) {
@@ -113,10 +112,6 @@ public class LocalizableErrorMessageFactory<E extends Exception> extends Abstrac
     public void setMessageSource(MessageSource messageSource) {
         Assert.notNull(messageSource, "messageSource must not be null");
         this.messageSource = messageSource;
-    }
-
-    public void setFullyQualifiedNames(boolean fullyQualifiedNames) {
-        this.fullyQualifiedNames = fullyQualifiedNames;
     }
 
     public void setInterpolator(MessageInterpolator interpolator) {

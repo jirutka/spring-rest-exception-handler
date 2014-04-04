@@ -46,8 +46,6 @@ public final class LocalizableErrorMessageFactoryBuilder {
 
     private MessageInterpolator interpolator;
 
-    private boolean fullyQualifiedNames = true;
-
     private boolean withDefaults = true;
 
 
@@ -91,7 +89,6 @@ public final class LocalizableErrorMessageFactoryBuilder {
 
         factory.setMessageSource(messageSource);
         factory.setInterpolator(interpolator);
-        factory.setFullyQualifiedNames(fullyQualifiedNames);
 
         return factory;
     }

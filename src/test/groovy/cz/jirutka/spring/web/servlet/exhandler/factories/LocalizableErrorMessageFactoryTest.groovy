@@ -81,19 +81,13 @@ class LocalizableErrorMessageFactoryTest extends Specification {
 
     def 'getMessage: find message for this exception class'() {
         setup:
-            factory.fullyQualifiedNames = fullyQualifiedNames
-        and:
             def expected = 'Chunky bacon'
         when:
             def actual = factory.getMessage('title', ENGLISH)
         then:
-            1 * messageSource.getMessage("${prefix}.title", null, _, ENGLISH) >> expected
+            1 * messageSource.getMessage("${exceptionClass.name}.title", null, _, ENGLISH) >> expected
         and:
             actual == expected
-        where:
-            prefix                    | fullyQualifiedNames
-            exceptionClass.simpleName | false
-            exceptionClass.name       | true
     }
 
     def 'getMessage: find default message when no message for the exception class is found'() {
