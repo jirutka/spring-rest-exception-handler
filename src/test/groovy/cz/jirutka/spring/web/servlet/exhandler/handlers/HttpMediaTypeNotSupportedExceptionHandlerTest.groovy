@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories
+package cz.jirutka.spring.web.servlet.exhandler.handlers
 
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import spock.lang.Specification
 
 import static org.springframework.http.MediaType.*
 
-class HttpMediaTypeNotSupportedResponseFactoryTest extends Specification {
+class HttpMediaTypeNotSupportedExceptionHandlerTest extends Specification {
 
-    def factory = new HttpMediaTypeNotSupportedResponseFactory()
+    def handler = new HttpMediaTypeNotSupportedExceptionHandler()
 
 
     def 'create headers with "Accept" when supported media types are specified'() {
         given:
             def exception = new HttpMediaTypeNotSupportedException(IMAGE_GIF, [IMAGE_PNG, IMAGE_JPEG])
         when:
-            def headers = factory.createHeaders(exception, null)
+            def headers = handler.createHeaders(exception, null)
         then:
            headers.getAccept() == [IMAGE_PNG, IMAGE_JPEG]
     }
@@ -38,7 +38,7 @@ class HttpMediaTypeNotSupportedResponseFactoryTest extends Specification {
         given:
             def exception = new HttpMediaTypeNotSupportedException('foo')
         when:
-            def result = factory.createHeaders(exception, null)
+            def result = handler.createHeaders(exception, null)
         then:
             ! result.get('Accept')
     }

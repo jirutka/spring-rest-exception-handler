@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories
+package cz.jirutka.spring.web.servlet.exhandler.handlers
 
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import spock.lang.Specification
@@ -21,16 +21,16 @@ import spock.lang.Specification
 import static org.springframework.http.HttpMethod.POST
 import static org.springframework.http.HttpMethod.PUT
 
-class HttpRequestMethodNotSupportedResponseFactoryTest extends Specification {
+class HttpRequestMethodNotSupportedExceptionHandlerTest extends Specification {
 
-    def factory = new HttpRequestMethodNotSupportedResponseFactory()
+    def handler = new HttpRequestMethodNotSupportedExceptionHandler()
 
 
     def 'create headers with "Allow" when supported methods are specified'() {
         given:
             def exception = new HttpRequestMethodNotSupportedException('PATCH', ['PUT', 'POST'])
         when:
-            def headers = factory.createHeaders(exception, null)
+            def headers = handler.createHeaders(exception, null)
         then:
             headers.getAllow() == [PUT, POST] as Set
     }
@@ -39,7 +39,7 @@ class HttpRequestMethodNotSupportedResponseFactoryTest extends Specification {
         given:
             def exception = new HttpRequestMethodNotSupportedException('PATCH')
         when:
-            def result = factory.createHeaders(exception, null)
+            def result = handler.createHeaders(exception, null)
         then:
             ! result.get('Allow')
     }

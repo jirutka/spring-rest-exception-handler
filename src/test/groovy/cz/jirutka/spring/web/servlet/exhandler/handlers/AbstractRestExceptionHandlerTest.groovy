@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories
+package cz.jirutka.spring.web.servlet.exhandler.handlers
 
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage
 import org.springframework.http.HttpHeaders
@@ -23,29 +23,29 @@ import spock.lang.Specification
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST
 
-class AbstractErrorResponseFactoryTest extends Specification {
+class AbstractRestExceptionHandlerTest extends Specification {
 
     def 'determine exception class from generic type'() {
         given:
-            def factory = new AbstractErrorResponseFactory<IOException, ErrorMessage>(BAD_REQUEST) {
+            def factory = new AbstractRestExceptionHandler<IOException, ErrorMessage>(BAD_REQUEST) {
                 ErrorMessage createBody(IOException ex, WebRequest req) { null}
             }
         expect:
             factory.exceptionClass == IOException
     }
 
-    def 'create error response using createHeaders, createBody and getStatus methods'() {
+    def 'handle exception using createHeaders, createBody and getStatus methods'() {
         setup:
             def ex = new IOException()
             def req = Mock(WebRequest)
             def expected = new ResponseEntity(new ErrorMessage(), new HttpHeaders(date: 123), BAD_REQUEST)
         and:
-            def factory = Spy(AbstractErrorResponseFactory, constructorArgs: [IOException, expected.statusCode]) {
+            def factory = Spy(AbstractRestExceptionHandler, constructorArgs: [IOException, expected.statusCode]) {
                 createHeaders(ex, req) >> expected.headers
                 createBody(ex, req) >> expected.body
             }
         when:
-            def actual = factory.createErrorResponse(ex, req)
+            def actual = factory.handleException(ex, req)
         then:
             actual == expected
     }

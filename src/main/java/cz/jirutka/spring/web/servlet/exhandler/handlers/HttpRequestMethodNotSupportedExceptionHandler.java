@@ -13,33 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package cz.jirutka.spring.web.servlet.exhandler.factories;
+package cz.jirutka.spring.web.servlet.exhandler.handlers;
 
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
-public class NoSuchRequestHandlingMethodResponseFactory
-        extends LocalizableErrorMessageFactory<NoSuchRequestHandlingMethodException> {
+public class HttpRequestMethodNotSupportedExceptionHandler
+        extends ErrorMessageRestExceptionHandler<HttpRequestMethodNotSupportedException> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DispatcherServlet.PAGE_NOT_FOUND_LOG_CATEGORY);
 
 
-    public NoSuchRequestHandlingMethodResponseFactory() {
-        super(NOT_FOUND);
+    public HttpRequestMethodNotSupportedExceptionHandler() {
+        super(METHOD_NOT_ALLOWED);
     }
 
     @Override
-    public ResponseEntity<ErrorMessage> createErrorResponse(NoSuchRequestHandlingMethodException ex, WebRequest req) {
-
+    public ResponseEntity<ErrorMessage> handleException(HttpRequestMethodNotSupportedException ex, WebRequest req) {
         LOG.warn(ex.getMessage());
-        return super.createErrorResponse(ex, req);
+
+        return super.handleException(ex, req);
+    }
+
+    @Override
+    protected HttpHeaders createHeaders(HttpRequestMethodNotSupportedException ex, WebRequest req) {
+
+        HttpHeaders headers = super.createHeaders(ex, req);
+
+        if (!isEmpty(ex.getSupportedMethods())) {
+            headers.setAllow(ex.getSupportedHttpMethods());
+        }
+        return headers;
     }
 }

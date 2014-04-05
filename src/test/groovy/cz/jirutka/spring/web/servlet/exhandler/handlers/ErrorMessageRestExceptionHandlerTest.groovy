@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories
+package cz.jirutka.spring.web.servlet.exhandler.handlers
 
 import cz.jirutka.spring.web.servlet.exhandler.interpolators.MessageInterpolator
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage
@@ -23,12 +23,12 @@ import org.springframework.web.context.request.WebRequest
 import spock.lang.Shared
 import spock.lang.Specification
 
-import static cz.jirutka.spring.web.servlet.exhandler.factories.LocalizableErrorMessageFactory.DEFAULT_PREFIX
+import static ErrorMessageRestExceptionHandler.DEFAULT_PREFIX
 import static java.util.Locale.ENGLISH
 import static java.util.Locale.JAPANESE
 import static org.springframework.http.HttpStatus.BAD_REQUEST
 
-class LocalizableErrorMessageFactoryTest extends Specification {
+class ErrorMessageRestExceptionHandlerTest extends Specification {
 
     @Shared exceptionClass = TypeMismatchException
 
@@ -36,15 +36,15 @@ class LocalizableErrorMessageFactoryTest extends Specification {
     def interpolator = Mock(MessageInterpolator)
     def request = Mock(WebRequest)
 
-    def factory = Spy(LocalizableErrorMessageFactory, constructorArgs: [exceptionClass, BAD_REQUEST])
+    def handler = Spy(ErrorMessageRestExceptionHandler, constructorArgs: [exceptionClass, BAD_REQUEST])
 
     void setup() {
-        factory.messageSource = messageSource
-        factory.interpolator = interpolator
+        handler.messageSource = messageSource
+        handler.interpolator = interpolator
     }
 
 
-    def 'create ErrorMessage using resolveMessage'() {
+    def 'createBody: create ErrorMessage using resolveMessage'() {
         setup:
             def exception = new TypeMismatchException(1, String)
             def expected = new ErrorMessage(
@@ -54,10 +54,10 @@ class LocalizableErrorMessageFactoryTest extends Specification {
                     detail: "You're screwed!",
                     instance: new URI('http://example.org/type-mismatch'))
         when:
-            def actual = factory.createBody(exception, request)
+            def actual = handler.createBody(exception, request)
         then:
             ['type', 'title', 'detail', 'instance'].each { key ->
-                1 * factory.resolveMessage(key, exception, request) >> expected.properties[key].toString()
+                1 * handler.resolveMessage(key, exception, request) >> expected.properties[key].toString()
             }
         and:
             actual == expected
@@ -70,9 +70,9 @@ class LocalizableErrorMessageFactoryTest extends Specification {
             def msg = 'Type mismatch on value: 1'
             request.getLocale() >> JAPANESE
         when:
-            def result = factory.resolveMessage('detail', ex, request)
+            def result = handler.resolveMessage('detail', ex, request)
         then:
-            1 * factory.getMessage('detail', JAPANESE) >> msgTemplate
+            1 * handler.getMessage('detail', JAPANESE) >> msgTemplate
         then:
             1 * interpolator.interpolate(msgTemplate, [ex: ex, req: request]) >> msg
         and:
@@ -83,7 +83,7 @@ class LocalizableErrorMessageFactoryTest extends Specification {
         setup:
             def expected = 'Chunky bacon'
         when:
-            def actual = factory.getMessage('title', ENGLISH)
+            def actual = handler.getMessage('title', ENGLISH)
         then:
             1 * messageSource.getMessage("${exceptionClass.name}.title", null, _, ENGLISH) >> expected
         and:
@@ -94,7 +94,7 @@ class LocalizableErrorMessageFactoryTest extends Specification {
         given:
             def expected = 'Chunky bacon'
         when:
-            def actual = factory.getMessage('type', ENGLISH)
+            def actual = handler.getMessage('type', ENGLISH)
         then:
             1 * messageSource.getMessage("${exceptionClass.name}.type", null, _, ENGLISH) >> null
         then:
@@ -107,7 +107,7 @@ class LocalizableErrorMessageFactoryTest extends Specification {
         setup:
             messageSource._ >> null
         expect:
-            factory.getMessage('type', ENGLISH) == ''
+            handler.getMessage('type', ENGLISH) == ''
     }
 
 }

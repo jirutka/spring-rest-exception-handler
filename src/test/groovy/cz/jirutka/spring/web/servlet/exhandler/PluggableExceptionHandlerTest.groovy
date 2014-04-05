@@ -15,8 +15,8 @@
  */
 package cz.jirutka.spring.web.servlet.exhandler
 
-import cz.jirutka.spring.web.servlet.exhandler.factories.AbstractErrorResponseFactory
-import cz.jirutka.spring.web.servlet.exhandler.factories.ErrorResponseFactory
+import cz.jirutka.spring.web.servlet.exhandler.handlers.AbstractRestExceptionHandler
+import cz.jirutka.spring.web.servlet.exhandler.handlers.RestExceptionHandler
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage
 import org.springframework.http.ResponseEntity
 import org.springframework.web.context.request.WebRequest
@@ -37,8 +37,8 @@ class PluggableExceptionHandlerTest extends Specification {
 
     def 'add instance of ErrorResponseFactory and determine exception type using generics'() {
         setup:
-            def factory = new ErrorResponseFactory<NumberFormatException, ?>() {
-                ResponseEntity<?> createErrorResponse(NumberFormatException ex, WebRequest req) { }
+            def factory = new RestExceptionHandler<NumberFormatException, ?>() {
+                ResponseEntity<?> handleException(NumberFormatException ex, WebRequest req) { }
             }
         when:
             handler.addResponseFactory(factory)
@@ -48,11 +48,11 @@ class PluggableExceptionHandlerTest extends Specification {
 
     def 'add instance of AbstractErrorResponseFactory'() {
         setup:
-            def factory = new AbstractErrorResponseFactory<Exception, ErrorMessage>(IOException, BAD_REQUEST) {
+            def factory = new AbstractRestExceptionHandler<Exception, ErrorMessage>(IOException, BAD_REQUEST) {
                 ErrorMessage createBody(Exception ex, WebRequest req) { null }
             }
         when:
-            handler.addResponseFactory(factory as AbstractErrorResponseFactory)
+            handler.addResponseFactory(factory as AbstractRestExceptionHandler)
         then:
            handler.factories.get(IOException) == factory
     }
@@ -66,7 +66,7 @@ class PluggableExceptionHandlerTest extends Specification {
 
     def 'find response factory and handle exception'() {
         setup:
-            def factories = new ErrorResponseFactory[3].collect{ Mock(ErrorResponseFactory) }
+            def factories = new RestExceptionHandler[3].collect{ Mock(RestExceptionHandler) }
             def expected = new ResponseEntity(BAD_REQUEST)
         and:
             handler.addResponseFactory(NumberFormatException, factories[2])
@@ -75,7 +75,7 @@ class PluggableExceptionHandlerTest extends Specification {
         when:
             handler.handleException(exception, request) == expected
         then:
-            1 * factories[factoryNum].createErrorResponse(exception, request) >> expected
+            1 * factories[factoryNum].handleException(exception, request) >> expected
         where:
             exception                       | factoryNum
             new NumberFormatException()     | 2

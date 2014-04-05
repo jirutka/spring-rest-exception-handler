@@ -25,7 +25,7 @@ class ErrorMessageTest extends Specification {
     def jsonParser = new JsonSlurper()
 
 
-    def 'convert to JSON and ignore empty fields'() {
+    def 'convert to JSON using Jackson2 and ignore empty fields'() {
         given:
             def object = new ErrorMessage(
                     type: new URI('http://httpstatus.es/400'),

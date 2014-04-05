@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories;
+package cz.jirutka.spring.web.servlet.exhandler.handlers;
 
 import cz.jirutka.spring.web.servlet.exhandler.interpolators.MessageInterpolator;
 import lombok.Setter;
@@ -40,7 +40,7 @@ import static org.springframework.http.HttpStatus.*;
 @Accessors(fluent=true)
 public final class LocalizableErrorMessageFactoryBuilder {
 
-    private final List<LocalizableErrorMessageFactory> factories = new ArrayList<>();
+    private final List<ErrorMessageRestExceptionHandler> factories = new ArrayList<>();
 
     private MessageSource messageSource;
 
@@ -49,13 +49,13 @@ public final class LocalizableErrorMessageFactoryBuilder {
     private boolean withDefaults = true;
 
 
-    public List<LocalizableErrorMessageFactory> build() {
+    public List<ErrorMessageRestExceptionHandler> build() {
 
         if (withDefaults) {
-            add( new NoSuchRequestHandlingMethodResponseFactory() );
-            add( new HttpRequestMethodNotSupportedResponseFactory() );
-            add( new HttpMediaTypeNotSupportedResponseFactory() );
-            add( new MethodArgumentNotValidResponseFactory() );
+            add( new NoSuchRequestHandlingMethodExceptionHandler() );
+            add( new HttpRequestMethodNotSupportedExceptionHandler() );
+            add( new HttpMediaTypeNotSupportedExceptionHandler() );
+            add( new MethodArgumentNotValidExceptionHandler() );
 
             map( HttpMediaTypeNotAcceptableException.class, NOT_ACCEPTABLE );
             map( MissingServletRequestParameterException.class, BAD_REQUEST );
@@ -71,7 +71,7 @@ public final class LocalizableErrorMessageFactoryBuilder {
         return factories;
     }
 
-    public LocalizableErrorMessageFactoryBuilder add(LocalizableErrorMessageFactory factory) {
+    public LocalizableErrorMessageFactoryBuilder add(ErrorMessageRestExceptionHandler factory) {
 
         initialize(factory);
         factories.add(factory);
@@ -80,12 +80,12 @@ public final class LocalizableErrorMessageFactoryBuilder {
 
     public LocalizableErrorMessageFactoryBuilder map(Class<? extends Exception> exceptionClass, HttpStatus status) {
 
-        factories.add(initialize(new LocalizableErrorMessageFactory<>(exceptionClass, status)));
+        factories.add(initialize(new ErrorMessageRestExceptionHandler<>(exceptionClass, status)));
         return this;
     }
 
 
-    private LocalizableErrorMessageFactory initialize(LocalizableErrorMessageFactory factory) {
+    private ErrorMessageRestExceptionHandler initialize(ErrorMessageRestExceptionHandler factory) {
 
         factory.setMessageSource(messageSource);
         factory.setInterpolator(interpolator);

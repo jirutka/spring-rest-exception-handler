@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories;
+package cz.jirutka.spring.web.servlet.exhandler.handlers;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,10 +25,10 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-public class HttpMediaTypeNotSupportedResponseFactory extends LocalizableErrorMessageFactory<HttpMediaTypeNotSupportedException> {
+public class HttpMediaTypeNotSupportedExceptionHandler extends ErrorMessageRestExceptionHandler<HttpMediaTypeNotSupportedException> {
 
 
-    public HttpMediaTypeNotSupportedResponseFactory() {
+    public HttpMediaTypeNotSupportedExceptionHandler() {
         super(UNSUPPORTED_MEDIA_TYPE);
     }
 

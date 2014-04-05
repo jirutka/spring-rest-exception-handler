@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories
+package cz.jirutka.spring.web.servlet.exhandler.handlers
 
 import cz.jirutka.spring.web.servlet.exhandler.messages.ValidationErrorMessage
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -22,9 +22,9 @@ import spock.lang.Specification
 
 import static cz.jirutka.spring.web.servlet.exhandler.test.BindingResultBuilder.createBindingResult
 
-class MethodArgumentNotValidResponseFactoryTest extends Specification {
+class MethodArgumentNotValidExceptionHandlerTest extends Specification {
 
-    def factory = Spy(MethodArgumentNotValidResponseFactory) {
+    def handler = Spy(MethodArgumentNotValidExceptionHandler) {
         resolveMessage(*_) >> ''
     }
     def request = Stub(WebRequest)
@@ -44,7 +44,7 @@ class MethodArgumentNotValidResponseFactoryTest extends Specification {
                     .build()
             def exception = new MethodArgumentNotValidException(null, bindingResult)
         when:
-            def actual = factory.createBody(exception, request) as ValidationErrorMessage
+            def actual = handler.createBody(exception, request) as ValidationErrorMessage
         then:
             actual.errors == expected.errors
     }

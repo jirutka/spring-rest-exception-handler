@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories;
+package cz.jirutka.spring.web.servlet.exhandler.handlers;
 
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
@@ -25,21 +25,21 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.lang.reflect.TypeVariable;
 
-public abstract class AbstractErrorResponseFactory<E extends Exception, T> implements ErrorResponseFactory<E, T> {
+public abstract class AbstractRestExceptionHandler<E extends Exception, T> implements RestExceptionHandler<E, T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractErrorResponseFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractRestExceptionHandler.class);
 
     private final Class<E> exceptionClass;
     private final HttpStatus status;
 
 
-    protected AbstractErrorResponseFactory(HttpStatus status) {
+    protected AbstractRestExceptionHandler(HttpStatus status) {
         this.exceptionClass = determineTargetType();
         this.status = status;
         LOG.trace("Determined generic exception type: {}", exceptionClass.getName());
     }
 
-    protected AbstractErrorResponseFactory(Class<E> exceptionClass, HttpStatus status) {
+    protected AbstractRestExceptionHandler(Class<E> exceptionClass, HttpStatus status) {
         this.exceptionClass = exceptionClass;
         this.status = status;
     }
@@ -52,7 +52,7 @@ public abstract class AbstractErrorResponseFactory<E extends Exception, T> imple
 
     ////// Template methods //////
 
-    public ResponseEntity<T> createErrorResponse(E ex, WebRequest req) {
+    public ResponseEntity<T> handleException(E ex, WebRequest req) {
 
         T body = createBody(ex, req);
         HttpHeaders headers = createHeaders(ex, req);
@@ -75,7 +75,7 @@ public abstract class AbstractErrorResponseFactory<E extends Exception, T> imple
 
     @SuppressWarnings("unchecked")
     private Class<E> determineTargetType() {
-        TypeVariable<?> typeVar = AbstractErrorResponseFactory.class.getTypeParameters()[0];
+        TypeVariable<?> typeVar = AbstractRestExceptionHandler.class.getTypeParameters()[0];
         return (Class<E>) TypeUtils.getRawType(typeVar, this.getClass());
     }
 }

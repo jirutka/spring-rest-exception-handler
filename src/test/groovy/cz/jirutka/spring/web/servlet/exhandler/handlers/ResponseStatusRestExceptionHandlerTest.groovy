@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories
+package cz.jirutka.spring.web.servlet.exhandler.handlers
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import spock.lang.Specification
 
-class StatusErrorResponseFactoryTest extends Specification {
+class ResponseStatusRestExceptionHandlerTest extends Specification {
 
-    def 'create ResponseEntity with defined status'() {
+    def 'return ResponseEntity with defined status'() {
         setup:
             def expected = HttpStatus.I_AM_A_TEAPOT
-            def factory = new StatusErrorResponseFactory(expected)
+            def factory = new ResponseStatusRestExceptionHandler(expected)
         expect:
-            factory.createErrorResponse(null, null) == new ResponseEntity(expected)
+            factory.handleException(null, null) == new ResponseEntity(expected)
     }
 }

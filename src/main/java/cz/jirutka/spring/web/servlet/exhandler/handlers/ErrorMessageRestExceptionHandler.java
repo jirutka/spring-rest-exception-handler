@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories;
+package cz.jirutka.spring.web.servlet.exhandler.handlers;
 
 import cz.jirutka.spring.web.servlet.exhandler.interpolators.MessageInterpolator;
 import cz.jirutka.spring.web.servlet.exhandler.interpolators.NoOpMessageInterpolator;
@@ -34,10 +34,10 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-public class LocalizableErrorMessageFactory<E extends Exception>
-        extends AbstractErrorResponseFactory<E, ErrorMessage> implements MessageSourceAware {
+public class ErrorMessageRestExceptionHandler<E extends Exception>
+        extends AbstractRestExceptionHandler<E, ErrorMessage> implements MessageSourceAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LocalizableErrorMessageFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ErrorMessageRestExceptionHandler.class);
 
     protected static final String
             DEFAULT_PREFIX = "default",
@@ -51,11 +51,11 @@ public class LocalizableErrorMessageFactory<E extends Exception>
     private MessageInterpolator interpolator = new SpelMessageInterpolator();
 
 
-    public LocalizableErrorMessageFactory(HttpStatus status) {
+    public ErrorMessageRestExceptionHandler(HttpStatus status) {
         super(status);
     }
 
-    public LocalizableErrorMessageFactory(Class<E> exceptionClass, HttpStatus status) {
+    public ErrorMessageRestExceptionHandler(Class<E> exceptionClass, HttpStatus status) {
         super(exceptionClass, status);
     }
 

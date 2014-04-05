@@ -13,26 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories;
+package cz.jirutka.spring.web.servlet.exhandler.handlers;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
-/**
- * Simple implementation of {@link ErrorResponseFactory} that returns response
- * with status code and no content.
- */
-public class StatusErrorResponseFactory implements ErrorResponseFactory<Exception, Void> {
+public interface RestExceptionHandler<E extends Exception, T> {
 
-    private final HttpStatus status;
-
-
-    public StatusErrorResponseFactory(HttpStatus status) {
-        this.status = status;
-    }
-
-    public ResponseEntity<Void> createErrorResponse(Exception ex, WebRequest request) {
-        return new ResponseEntity<>(status);
-    }
+    /**
+     * Handles exception and generates {@link ResponseEntity}.
+     *
+     * @param exception The exception to get data from.
+     * @param request The current request.
+     * @return A response entity.
+     */
+    ResponseEntity<T> handleException(E exception, WebRequest request);
 }

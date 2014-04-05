@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.jirutka.spring.web.servlet.exhandler.factories;
+package cz.jirutka.spring.web.servlet.exhandler.handlers;
 
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage;
 import cz.jirutka.spring.web.servlet.exhandler.messages.ValidationErrorMessage;
@@ -25,10 +25,10 @@ import org.springframework.web.context.request.WebRequest;
 
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
-public class MethodArgumentNotValidResponseFactory extends LocalizableErrorMessageFactory<MethodArgumentNotValidException> {
+public class MethodArgumentNotValidExceptionHandler extends ErrorMessageRestExceptionHandler<MethodArgumentNotValidException> {
 
 
-    public MethodArgumentNotValidResponseFactory() {
+    public MethodArgumentNotValidExceptionHandler() {
         super(UNPROCESSABLE_ENTITY);
     }
 

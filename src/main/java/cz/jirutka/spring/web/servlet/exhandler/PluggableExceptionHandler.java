@@ -15,15 +15,14 @@
  */
 package cz.jirutka.spring.web.servlet.exhandler;
 
-import cz.jirutka.spring.web.servlet.exhandler.factories.AbstractErrorResponseFactory;
-import cz.jirutka.spring.web.servlet.exhandler.factories.ErrorResponseFactory;
-import cz.jirutka.spring.web.servlet.exhandler.factories.StatusErrorResponseFactory;
+import cz.jirutka.spring.web.servlet.exhandler.handlers.AbstractRestExceptionHandler;
+import cz.jirutka.spring.web.servlet.exhandler.handlers.ResponseStatusRestExceptionHandler;
+import cz.jirutka.spring.web.servlet.exhandler.handlers.RestExceptionHandler;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import java.lang.reflect.TypeVariable;
@@ -39,42 +38,42 @@ public class PluggableExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(PluggableExceptionHandler.class);
 
-    private final static ErrorResponseFactory<Exception, Void> DEFAULT_FACTORY =
-            new StatusErrorResponseFactory(INTERNAL_SERVER_ERROR);
+    private final static RestExceptionHandler<Exception, Void> DEFAULT_FACTORY =
+            new ResponseStatusRestExceptionHandler(INTERNAL_SERVER_ERROR);
 
-    private final Map<Class<? extends Exception>, ErrorResponseFactory> factories = new LinkedHashMap<>();
+    private final Map<Class<? extends Exception>, RestExceptionHandler> factories = new LinkedHashMap<>();
 
 
     public <E extends Exception>
-            void addResponseFactory(Class<? extends E> exceptionClass, ErrorResponseFactory<E, ?> factory) {
+            void addResponseFactory(Class<? extends E> exceptionClass, RestExceptionHandler<E, ?> factory) {
 
         LOG.debug("Registering factory for {}: {}", exceptionClass.getName(), factory);
         factories.put(exceptionClass, factory);
     }
 
-    public <E extends Exception> void addResponseFactory(ErrorResponseFactory<E, ?> factory) {
+    public <E extends Exception> void addResponseFactory(RestExceptionHandler<E, ?> factory) {
         addResponseFactory(determineTargetType(factory), factory);
     }
 
-    public <E extends Exception> void addResponseFactory(AbstractErrorResponseFactory<E, ?> factory) {
+    public <E extends Exception> void addResponseFactory(AbstractRestExceptionHandler<E, ?> factory) {
         addResponseFactory(factory.getExceptionClass(), factory);
     }
 
 
-    @ExceptionHandler
+    @org.springframework.web.bind.annotation.ExceptionHandler
     protected ResponseEntity<?> handleException(Exception ex, WebRequest request) {
 
         // See http://stackoverflow.com/a/12979543/2217862
         request.removeAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, SCOPE_REQUEST);
 
-        ErrorResponseFactory<Exception, ?> factory = findErrorResponseFactory(ex.getClass());
+        RestExceptionHandler<Exception, ?> factory = findErrorResponseFactory(ex.getClass());
 
         LOG.debug("Handling exception {} with response factory: {}", ex.getClass().getName(), factory);
-        return factory.createErrorResponse(ex, request);
+        return factory.handleException(ex, request);
     }
 
     @SuppressWarnings("unchecked")
-    protected ErrorResponseFactory<Exception, ?> findErrorResponseFactory(Class<? extends Exception> exceptionClass) {
+    protected RestExceptionHandler<Exception, ?> findErrorResponseFactory(Class<? extends Exception> exceptionClass) {
 
         for (Class clazz = exceptionClass; clazz != Throwable.class; clazz = clazz.getSuperclass()) {
             if (factories.containsKey(clazz)) {
@@ -86,9 +85,9 @@ public class PluggableExceptionHandler {
 
 
     @SuppressWarnings("unchecked")
-    <E extends Exception> Class<E> determineTargetType(ErrorResponseFactory<E, ?> factory) {
+    <E extends Exception> Class<E> determineTargetType(RestExceptionHandler<E, ?> factory) {
 
-        TypeVariable<?> typeVar = ErrorResponseFactory.class.getTypeParameters()[0];
+        TypeVariable<?> typeVar = RestExceptionHandler.class.getTypeParameters()[0];
         return (Class<E>) TypeUtils.getRawType(typeVar, factory.getClass());
     }
 }
