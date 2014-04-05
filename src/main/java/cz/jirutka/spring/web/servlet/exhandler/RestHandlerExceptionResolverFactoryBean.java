@@ -22,10 +22,13 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.util.Assert;
 import org.springframework.web.accept.ContentNegotiationManager;
 
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Collections.emptyMap;
 
 @Setter
 public class RestHandlerExceptionResolverFactoryBean implements FactoryBean<RestHandlerExceptionResolver> {
@@ -34,15 +37,15 @@ public class RestHandlerExceptionResolverFactoryBean implements FactoryBean<Rest
     private MessageInterpolator messageInterpolator;
     private List<HttpMessageConverter<?>> httpMessageConverters;
     private ContentNegotiationManager contentNegotiationManager;
-    private boolean withDefaultHandlers;
-    private boolean withDefaultMessageSource;
-    private Map<Class<? extends Exception>, ?> exceptionHandlers;
+    private boolean withDefaultHandlers = true;
+    private boolean withDefaultMessageSource = true;
+    private Map<Class<? extends Exception>, ?> exceptionHandlers = emptyMap();
 
 
     @SuppressWarnings("unchecked")
     public RestHandlerExceptionResolver getObject() {
 
-        RestHandlerExceptionResolverBuilder builder = new RestHandlerExceptionResolverBuilder()
+        RestHandlerExceptionResolverBuilder builder = createBuilder()
                 .messageSource(messageSource)
                 .messageInterpolator(messageInterpolator)
                 .httpMessageConverters(httpMessageConverters)
@@ -74,7 +77,12 @@ public class RestHandlerExceptionResolverFactoryBean implements FactoryBean<Rest
     }
 
 
-    private HttpStatus parseHttpStatus(Object value) {
+    RestHandlerExceptionResolverBuilder createBuilder() {
+        return RestHandlerExceptionResolver.builder();
+    }
+
+    HttpStatus parseHttpStatus(Object value) {
+        Assert.notNull(value, "Values of the exceptionHandlers map must not be null");
 
         if (value instanceof HttpStatus) {
             return (HttpStatus) value;
@@ -82,9 +90,13 @@ public class RestHandlerExceptionResolverFactoryBean implements FactoryBean<Rest
         } else if (value instanceof Integer) {
             return HttpStatus.valueOf((int) value);
 
+        } else if (value instanceof String) {
+            return HttpStatus.valueOf(Integer.valueOf((String) value));
+
         } else {
-            throw new IllegalArgumentException(
-                    "Handlers map value must be instance of ErrorResponseFactory, HttpStatus, or int.");
+            throw new IllegalArgumentException(String.format(
+                    "Values of the exceptionHandlers maps must be instance of ErrorResponseFactory, HttpStatus, " +
+                    "String, or int, but %s given", value.getClass()));
         }
     }
 }

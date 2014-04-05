@@ -51,7 +51,7 @@ import static org.springframework.http.HttpStatus.*;
 @Setter
 @Accessors(fluent=true)
 @SuppressWarnings("unchecked")
-public final class RestHandlerExceptionResolverBuilder {
+public class RestHandlerExceptionResolverBuilder {
 
     public static final String DEFAULT_MESSAGES_BASENAME = "classpath:/cz/jirutka/spring/web/servlet/exhandler/messages";
 
