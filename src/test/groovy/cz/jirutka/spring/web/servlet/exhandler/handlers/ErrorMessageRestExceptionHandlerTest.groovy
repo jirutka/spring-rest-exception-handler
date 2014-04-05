@@ -40,7 +40,7 @@ class ErrorMessageRestExceptionHandlerTest extends Specification {
 
     void setup() {
         handler.messageSource = messageSource
-        handler.interpolator = interpolator
+        handler.messageInterpolator = interpolator
     }
 
 

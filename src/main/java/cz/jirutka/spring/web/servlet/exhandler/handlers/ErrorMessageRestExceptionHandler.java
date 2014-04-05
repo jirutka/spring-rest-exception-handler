@@ -16,6 +16,7 @@
 package cz.jirutka.spring.web.servlet.exhandler.handlers;
 
 import cz.jirutka.spring.web.servlet.exhandler.interpolators.MessageInterpolator;
+import cz.jirutka.spring.web.servlet.exhandler.interpolators.MessageInterpolatorAware;
 import cz.jirutka.spring.web.servlet.exhandler.interpolators.NoOpMessageInterpolator;
 import cz.jirutka.spring.web.servlet.exhandler.interpolators.SpelMessageInterpolator;
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage;
@@ -35,7 +36,7 @@ import java.util.Map;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public class ErrorMessageRestExceptionHandler<E extends Exception>
-        extends AbstractRestExceptionHandler<E, ErrorMessage> implements MessageSourceAware {
+        extends AbstractRestExceptionHandler<E, ErrorMessage> implements MessageSourceAware, MessageInterpolatorAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErrorMessageRestExceptionHandler.class);
 
@@ -51,7 +52,7 @@ public class ErrorMessageRestExceptionHandler<E extends Exception>
     private MessageInterpolator interpolator = new SpelMessageInterpolator();
 
 
-    public ErrorMessageRestExceptionHandler(HttpStatus status) {
+    protected ErrorMessageRestExceptionHandler(HttpStatus status) {
         super(status);
     }
 
@@ -113,7 +114,7 @@ public class ErrorMessageRestExceptionHandler<E extends Exception>
         this.messageSource = messageSource;
     }
 
-    public void setInterpolator(MessageInterpolator interpolator) {
+    public void setMessageInterpolator(MessageInterpolator interpolator) {
         this.interpolator = defaultIfNull(interpolator, new NoOpMessageInterpolator());
     }
 }

@@ -22,10 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
-import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.util.Assert;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -37,44 +34,31 @@ import org.springframework.web.servlet.mvc.method.annotation.HttpEntityMethodPro
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cz.jirutka.spring.web.servlet.exhandler.HttpMessageConverterUtils.*;
+import static cz.jirutka.spring.web.servlet.exhandler.support.HttpMessageConverterUtils.getDefaultHttpMessageConverters;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolver implements InitializingBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestHandlerExceptionResolver.class);
 
-    private List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+    private List<HttpMessageConverter<?>> messageConverters = getDefaultHttpMessageConverters();
 
     private ContentNegotiationManager contentNegotiationManager = new ContentNegotiationManager();
 
     private Map<Class<? extends Exception>, RestExceptionHandler> handlers = new LinkedHashMap<>();
 
+    // package visibility for tests
     HandlerMethodReturnValueHandler returnValueHandler;
 
 
-    public RestHandlerExceptionResolver() {
-        StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
-        stringHttpMessageConverter.setWriteAcceptCharset(false); // See SPR-7316
 
-        messageConverters.add(stringHttpMessageConverter);
-
-        if (isJaxb2Present()) {
-            messageConverters.add(new Jaxb2RootElementHttpMessageConverter());
-        }
-        if (isJackson2Present()) {
-            messageConverters.add(new MappingJackson2HttpMessageConverter());
-
-        } else if (isJacksonPresent()) {
-            //noinspection deprecation
-            messageConverters.add(new MappingJacksonHttpMessageConverter());
-        }
+    public static RestHandlerExceptionResolverBuilder builder() {
+        return new RestHandlerExceptionResolverBuilder();
     }
 
 
@@ -129,6 +113,7 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      * responses.
      */
     public void setMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
+        Assert.notNull(messageConverters, "messageConverters must not be null");
         this.messageConverters = messageConverters;
     }
 
@@ -144,7 +129,7 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      * media types. If not set, the default constructor is used.
      */
     public void setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager) {
-        this.contentNegotiationManager = contentNegotiationManager;
+        this.contentNegotiationManager = defaultIfNull(contentNegotiationManager, new ContentNegotiationManager());
     }
 
     /**
