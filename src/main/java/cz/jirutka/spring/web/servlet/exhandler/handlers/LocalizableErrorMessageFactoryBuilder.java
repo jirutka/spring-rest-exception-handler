@@ -25,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
@@ -64,7 +63,6 @@ public final class LocalizableErrorMessageFactoryBuilder {
             map( TypeMismatchException.class, BAD_REQUEST );
             map( HttpMessageNotReadableException.class, UNPROCESSABLE_ENTITY );
             map( HttpMessageNotWritableException.class, INTERNAL_SERVER_ERROR );
-            map( MethodArgumentNotValidException.class, BAD_REQUEST );
             map( MissingServletRequestPartException.class, BAD_REQUEST );
             map( NoHandlerFoundException.class, NOT_FOUND );
         }
