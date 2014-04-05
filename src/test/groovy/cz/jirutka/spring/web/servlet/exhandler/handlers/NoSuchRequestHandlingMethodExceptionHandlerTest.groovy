@@ -19,47 +19,25 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.LoggingEvent
 import ch.qos.logback.core.Appender
 import org.slf4j.LoggerFactory
-import org.springframework.web.HttpRequestMethodNotSupportedException
+import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.servlet.DispatcherServlet
+import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException
 import spock.lang.Specification
 
-import static org.springframework.http.HttpMethod.POST
-import static org.springframework.http.HttpMethod.PUT
-
-class HttpRequestMethodNotSupportedExceptionHandlerTest extends Specification {
-
-    def handler = new HttpRequestMethodNotSupportedExceptionHandler()
+class NoSuchRequestHandlingMethodExceptionHandlerTest extends Specification {
 
 
-    def 'create headers with "Allow" when supported methods are specified'() {
-        given:
-            def exception = new HttpRequestMethodNotSupportedException('PATCH', ['PUT', 'POST'])
-        when:
-            def headers = handler.createHeaders(exception, null)
-        then:
-            headers.getAllow() == [PUT, POST] as Set
-    }
-
-    def 'create headers without "Allow" when supported methods are not specified'() {
-        given:
-            def exception = new HttpRequestMethodNotSupportedException('PATCH')
-        when:
-            def result = handler.createHeaders(exception, null)
-        then:
-            ! result.get('Allow')
-    }
-
-    def 'log exception message in PageNotFound logger'() {
+    def 'log exception in PageNotFound logger'() {
         setup:
             def logAppender = Mock(Appender)
             (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).addAppender(logAppender)
         and:
-            def spiedHandler = Spy(HttpRequestMethodNotSupportedExceptionHandler) {
+            def handler = Spy(NoSuchRequestHandlingMethodExceptionHandler) {
                 createBody(_, _) >> null
             }
-            def exception = new HttpRequestMethodNotSupportedException('PUT')
+            def exception = new NoSuchRequestHandlingMethodException(new MockHttpServletRequest())
         when:
-            spiedHandler.handleException(exception, null)
+            handler.handleException(exception, null)
         then:
             1 * logAppender.doAppend({ LoggingEvent it ->
                 it.message    == exception.message &&
