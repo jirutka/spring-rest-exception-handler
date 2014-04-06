@@ -56,9 +56,31 @@ For an example, the following error message that describes validation exception.
             <message>must be greater than zero</message>
         </error>
     </errors>
-}
 </problem>
 
+```
+
+
+### Localizable attributes
+
+Message values are read from a _properties_ file through the provided [MessageSource], so it can be simply customized
+and localized. Library contains a default [messages.properties] file that is implicitly set as a parent (i.e. fallback)
+of the provided message source. This can be disabled by setting `withDefaultMessageSource` to false (on a builder or
+factory bean).
+
+The key name is prefixed with a fully qualified class name of the Java exception, or `default` for the default value;
+this is used when no value for a particular exception class exists (even in the parent message source).
+
+Value is a message templates that may contain [SpEL] expressions delimited by `#{` and `}`. Inside an expression, you
+can access the exception being handled and the current request under the `ex`, resp. `req` variables.
+
+**For an example:**
+
+```properties
+org.springframework.web.HttpMediaTypeNotAcceptableException.type=http://httpstatus.es/406
+org.springframework.web.HttpMediaTypeNotAcceptableException.title=Not Acceptable
+org.springframework.web.HttpMediaTypeNotAcceptableException.detail=\
+    This resource provides only #{ex.supportedMediaTypes}, but you've sent Accept #{req.getHeaderValues('Accept')}.
 ```
 
 
@@ -143,11 +165,47 @@ public class RestContextConfig extends WebMvcConfigurerAdapter {
 ### Notes
 
 The ExceptionHandlerExceptionResolver is used to resolve exceptions through [@ExceptionHandler] methods. It must be
-registered _before_ the RestHandlerExceptionResolver. If you don’t have any [@ExceptionHandler], then you can omit
-`exceptionHandlerExceptionResolver` bean declaration.
+registered _before_ the RestHandlerExceptionResolver. If you don’t have any @ExceptionHandler methods, then you can
+omit the `exceptionHandlerExceptionResolver` bean declaration.
 
 Builder and FactoryBean registers set of the default handlers by default. This can be disabled by setting
 `withDefaultHandlers` to false.
+
+
+### Why is 404 bypassing exception handler?
+
+When the [DispatcherServlet] is unable to determine a corresponding handler for an incoming HTTP request, it sends 404
+directly without bothering to call an exception handler (see
+[on StackOverflow](http://stackoverflow.com/a/22751886/2217862)). This behaviour can be changed, since
+Spring version 4.0.0, using `throwExceptionIfNoHandlerFound` init parameter. You should set this to true for a
+consistent error responses.
+
+
+**When using WebApplicationInitializer:**
+
+```java
+public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+    protected void customizeRegistration(ServletRegistration.Dynamic reg) {
+        reg.setInitParameter("throwExceptionIfNoHandlerFound", "true");
+    }
+    ...
+}
+```
+
+**…or classic web.xml:**
+
+```xml
+<servlet>
+    <servlet-name>rest-dispatcher</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+        <param-name>throwExceptionIfNoHandlerFound</param-name>
+        <param-value>true</param-value>
+    </init-param>
+    ...
+</servlet>
+```
 
 
 Maven
@@ -185,3 +243,8 @@ This project is licensed under [Apache License 2.0](http://www.apache.org/licens
 
 [http-problem]: http://tools.ietf.org/html/draft-nottingham-http-problem-06
 [@ExceptionHandler]: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/bind/annotation/ExceptionHandler.html
+[DispatcherServlet]: http://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
+[MessageSource]: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/MessageSource.html
+[SpEL]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/expressions.html
+
+[messages.properties]: src/main/resources/cz/jirutka/spring/web/servlet/exhandler/messages.properties
