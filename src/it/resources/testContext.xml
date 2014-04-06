@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+    <mvc:annotation-driven />
+
+    <bean id="compositeExceptionResolver" class="org.springframework.web.servlet.handler.HandlerExceptionResolverComposite">
+        <property name="order" value="0" />
+        <property name="exceptionResolvers">
+            <list>
+                <ref bean="exceptionHandlerExceptionResolver" />
+                <ref bean="restExceptionResolver" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="restExceptionResolver" class="cz.jirutka.spring.web.servlet.exhandler.RestHandlerExceptionResolverFactoryBean">
+        <property name="messageSource" ref="httpErrorMessageSource" />
+        <property name="exceptionHandlers">
+            <map>
+                <entry key="org.springframework.web.HttpRequestMethodNotSupportedException" value="418" />
+                <entry key="cz.jirutka.spring.web.servlet.exhandler.fixtures.ZuulException">
+                    <bean class="cz.jirutka.spring.web.servlet.exhandler.fixtures.ZuulExceptionHandler" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="exceptionHandlerExceptionResolver" class="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" />
+
+    <bean id="httpErrorMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+          p:basename="classpath:/testMessages"
+          p:defaultEncoding="UTF-8" />
+
+    <bean class="cz.jirutka.spring.web.servlet.exhandler.fixtures.SampleController" />
+
+</beans>

@@ -108,6 +108,7 @@ public class RestHandlerExceptionResolverBuilder {
         if (contentNegotiationManager != null) {
             resolver.setContentNegotiationManager(contentNegotiationManager);
         }
+        resolver.afterPropertiesSet();
 
         return resolver;
     }
