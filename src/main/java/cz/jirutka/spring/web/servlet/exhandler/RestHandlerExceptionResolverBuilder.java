@@ -163,6 +163,7 @@ public class RestHandlerExceptionResolverBuilder {
         addHandlerTo( map, HttpMessageNotWritableException.class, INTERNAL_SERVER_ERROR );
         addHandlerTo( map, MissingServletRequestPartException.class, BAD_REQUEST );
         addHandlerTo( map, NoHandlerFoundException.class, NOT_FOUND );
+        addHandlerTo( map, Exception.class, INTERNAL_SERVER_ERROR );
 
         return map;
     }
