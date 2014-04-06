@@ -15,7 +15,6 @@
  */
 package cz.jirutka.spring.web.servlet.exhandler;
 
-import cz.jirutka.spring.web.servlet.exhandler.handlers.ResponseStatusRestExceptionHandler;
 import cz.jirutka.spring.web.servlet.exhandler.handlers.RestExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,6 @@ import java.util.Map;
 
 import static cz.jirutka.spring.web.servlet.exhandler.support.HttpMessageConverterUtils.getDefaultHttpMessageConverters;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolver implements InitializingBean {
 
@@ -74,8 +72,13 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
         ServletWebRequest webRequest = new ServletWebRequest(request, response);
         ModelAndViewContainer mavContainer = new ModelAndViewContainer();
 
-        ResponseEntity<?> entity = handleException(exception, webRequest);
-
+        ResponseEntity<?> entity;
+        try {
+            entity = handleException(exception, webRequest);
+        } catch (NoExceptionHandlerFoundException ex) {
+            LOG.warn("No exception handler found to handle exception: {}", exception.getClass().getName());
+            return null;
+        }
         try {
             returnValueHandler.handleReturnValue(entity, null, mavContainer, webRequest);
         } catch (Exception ex) {
@@ -101,7 +104,7 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
                 return handlers.get(clazz);
             }
         }
-        return new ResponseStatusRestExceptionHandler(INTERNAL_SERVER_ERROR);
+        throw new NoExceptionHandlerFoundException();
     }
 
 
@@ -146,4 +149,9 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
     public void setExceptionHandlers(Map<Class<? extends Exception>, RestExceptionHandler> handlers) {
         this.handlers = handlers;
     }
+
+
+    //////// Inner classes ////////
+
+    public static class NoExceptionHandlerFoundException extends RuntimeException {}
 }

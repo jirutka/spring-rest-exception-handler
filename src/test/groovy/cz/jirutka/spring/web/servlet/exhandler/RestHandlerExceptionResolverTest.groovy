@@ -92,13 +92,9 @@ class RestHandlerExceptionResolverTest extends Specification {
             new FileNotFoundException()     | 0
     }
 
-    def 'return 500 when no handler found'() {
-        setup:
-            def entity = new ResponseEntity(INTERNAL_SERVER_ERROR)
-        when:
-            resolver.doResolveException(request, response, null, new IOException())
-        then:
-           1 * returnValueHandler.handleReturnValue(entity, _, _, _)
+    def 'return null when no handler found'() {
+        expect:
+            resolver.doResolveException(request, response, null, new IOException()) == null
     }
 
     def 'return null when HttpEntityMethodProcessor throws an exception'() {
