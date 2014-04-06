@@ -19,7 +19,7 @@
     <packaging>jar</packaging>
 
     <name>Spring REST Exception Handler</name>
-    <description>A pluggable exception handler for REST APIs.</description>
+    <description>A pluggable exception handler for RESTful APIs.</description>
     <url>http://github.com/jirutka/spring-rest-exception-handler</url>
     <inceptionYear>2014</inceptionYear>
 
@@ -49,7 +49,7 @@
 
     <ciManagement>
         <system>travis</system>
-		<url>https://travis-ci.org/jirutka/spring-rest-exception-handler/</url>
+        <url>https://travis-ci.org/jirutka/spring-rest-exception-handler/</url>
     </ciManagement>
 
 
@@ -107,6 +107,20 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
             <scope>provided</scope>
@@ -120,19 +134,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-expression</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
 
+        <!--//// Test ////-->
 
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
