@@ -31,6 +31,7 @@ import java.security.InvalidParameterException
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST
 import static org.springframework.http.MediaType.APPLICATION_JSON
+import static org.springframework.web.servlet.HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE
 
 class RestHandlerExceptionResolverTest extends Specification {
 
@@ -120,5 +121,15 @@ class RestHandlerExceptionResolverTest extends Specification {
             responseProc.handleReturnValue(*_) >> { throw new IllegalStateException() }
         expect:
             resolver.doResolveException(request, response, null, new IOException()) == null
+    }
+
+    def 'remove PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE from the request'() {
+        setup:
+            resolver.exceptionHandlers[Exception] = responseFactory
+            request.setAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, ['image/png'])
+        when:
+            resolver.doResolveException(request, response, null, new Exception())
+        then:
+            ! request.getAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE)
     }
 }

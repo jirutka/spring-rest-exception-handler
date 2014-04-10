@@ -44,6 +44,8 @@ import java.util.Map;
 import static cz.jirutka.spring.web.servlet.exhandler.support.HttpMessageConverterUtils.getDefaultHttpMessageConverters;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.springframework.http.MediaType.APPLICATION_XML;
+import static org.springframework.web.context.request.WebRequest.SCOPE_REQUEST;
+import static org.springframework.web.servlet.HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE;
 
 public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolver implements InitializingBean {
 
@@ -100,6 +102,9 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
     }
 
     protected ResponseEntity<?> handleException(Exception exception, WebRequest request) {
+        // See http://stackoverflow.com/a/12979543/2217862
+        // This attribute is never set in MockMvc, so it's not covered in integration test.
+        request.removeAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, SCOPE_REQUEST);
 
         RestExceptionHandler<Exception, ?> handler = resolveExceptionHandler(exception.getClass());
 
