@@ -85,6 +85,7 @@ class RestHandlerExceptionResolverFactoryBeanTest extends Specification {
                 messageSource = Stub(MessageSource)
                 messageInterpolator = Stub(MessageInterpolator)
                 contentNegotiationManager = Stub(ContentNegotiationManager)
+                defaultContentType = 'application/json'
                 withDefaultHandlers = false
                 withDefaultMessageSource = true
             }
@@ -94,6 +95,7 @@ class RestHandlerExceptionResolverFactoryBeanTest extends Specification {
             1 * builder.messageSource(_ as MessageSource)
             1 * builder.messageInterpolator(_ as MessageInterpolator)
             1 * builder.contentNegotiationManager(_ as ContentNegotiationManager)
+            1 * builder.defaultContentType(_ as String)
             1 * builder.withDefaultHandlers(false)
             1 * builder.withDefaultMessageSource(true)
     }

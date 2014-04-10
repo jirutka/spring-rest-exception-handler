@@ -21,6 +21,7 @@
 
     <bean id="restExceptionResolver" class="cz.jirutka.spring.web.servlet.exhandler.RestHandlerExceptionResolverFactoryBean">
         <property name="messageSource" ref="httpErrorMessageSource" />
+        <property name="defaultContentType" value="application/json" />
         <property name="exceptionHandlers">
             <map>
                 <entry key="org.springframework.web.HttpRequestMethodNotSupportedException" value="418" />

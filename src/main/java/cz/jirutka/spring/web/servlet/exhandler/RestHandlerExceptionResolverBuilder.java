@@ -27,6 +27,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
@@ -46,7 +47,9 @@ import java.util.List;
 import java.util.Map;
 
 import static cz.jirutka.spring.web.servlet.exhandler.MapUtils.putAllIfAbsent;
+import static lombok.AccessLevel.NONE;
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.util.StringUtils.hasText;
 
 @Setter
 @Accessors(fluent=true)
@@ -64,6 +67,9 @@ public class RestHandlerExceptionResolverBuilder {
     private List<HttpMessageConverter<?>> httpMessageConverters;
 
     private ContentNegotiationManager contentNegotiationManager;
+
+    @Setter(NONE) // to not conflict with overloaded setter
+    private MediaType defaultContentType;
 
     private boolean withDefaultHandlers = true;
 
@@ -108,9 +114,22 @@ public class RestHandlerExceptionResolverBuilder {
         if (contentNegotiationManager != null) {
             resolver.setContentNegotiationManager(contentNegotiationManager);
         }
+        if (defaultContentType != null) {
+            resolver.setDefaultContentType(defaultContentType);
+        }
         resolver.afterPropertiesSet();
 
         return resolver;
+    }
+
+    public RestHandlerExceptionResolverBuilder defaultContentType(MediaType mediaType) {
+        this.defaultContentType = mediaType;
+        return this;
+    }
+
+    public RestHandlerExceptionResolverBuilder defaultContentType(String mediaType) {
+        defaultContentType( hasText(mediaType) ? MediaType.parseMediaType(mediaType) : null );
+        return this;
     }
 
     public <E extends Exception> RestHandlerExceptionResolverBuilder addHandler(

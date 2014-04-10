@@ -104,6 +104,7 @@ public class RestContextConfig extends WebMvcConfigurerAdapter {
     public RestHandlerExceptionResolver restExceptionResolver() {
         return RestHandlerExceptionResolver.builder()
                 .messageSource( httpErrorMessageSource() )
+                .defaultContentType(MediaType.APPLICATION_JSON)
                 .addErrorMessageHandler(EmptyResultDataAccessException.class, HttpStatus.NOT_FOUND)
                 .addHandler(MyException.class, new MyExceptionHandler())
                 .build();
@@ -143,6 +144,7 @@ public class RestContextConfig extends WebMvcConfigurerAdapter {
 <bean id="restExceptionResolver"
       class="cz.jirutka.spring.web.servlet.exhandler.RestHandlerExceptionResolverFactoryBean">
     <property name="messageSource" ref="httpErrorMessageSource" />
+    <property name="defaultContentType" value="application/json" />
     <property name="exceptionHandlers">
         <map>
             <entry key="org.springframework.dao.EmptyResultDataAccessException" value="404" />

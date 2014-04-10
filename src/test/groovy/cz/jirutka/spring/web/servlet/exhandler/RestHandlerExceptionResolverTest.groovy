@@ -19,6 +19,7 @@ import cz.jirutka.spring.web.servlet.exhandler.handlers.RestExceptionHandler
 import org.springframework.http.ResponseEntity
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
+import org.springframework.web.HttpMediaTypeNotAcceptableException
 import org.springframework.web.bind.ServletRequestBindingException
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler
@@ -29,52 +30,53 @@ import spock.lang.Specification
 import java.security.InvalidParameterException
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import static org.springframework.http.MediaType.APPLICATION_JSON
 
 class RestHandlerExceptionResolverTest extends Specification {
 
     def resolver = new RestHandlerExceptionResolver()
     def request = new MockHttpServletRequest()
     def response = new MockHttpServletResponse()
+    def respEntity = new ResponseEntity(BAD_REQUEST)
 
-    def returnValueHandler = Mock(HandlerMethodReturnValueHandler)
+    def responseProc = Mock(HandlerMethodReturnValueHandler)
+    def fallbackResponseProc = Mock(HandlerMethodReturnValueHandler)
     def responseFactory = Mock(RestExceptionHandler)
 
     void setup() {
-        resolver.returnValueHandler = returnValueHandler
+        resolver.responseProcessor = responseProc
+        resolver.fallbackResponseProcessor = fallbackResponseProc
+        resolver.exceptionHandlers[Exception] = responseFactory
     }
 
 
-    def 'initialize returnValueHandler after properties set'() {
+    def 'initialize responseProcessor and fallbackResponseProcessor after properties set'() {
         setup:
             def newResolver = new RestHandlerExceptionResolver()
         when:
             newResolver.afterPropertiesSet()
         then:
-            newResolver.returnValueHandler instanceof HttpEntityMethodProcessor
+            newResolver.responseProcessor instanceof HttpEntityMethodProcessor
+            newResolver.fallbackResponseProcessor instanceof HttpEntityMethodProcessor
     }
 
-    def 'resolve exception'() {
+    def 'resolve exception and process error response'() {
         setup:
             def exception = new ServletRequestBindingException('')
-            def entity = new ResponseEntity(BAD_REQUEST)
-        and:
-            resolver.exceptionHandlers[Exception] = responseFactory
         when:
             resolver.doResolveException(request, response, null, exception)
         then:
             1 * responseFactory.handleException(exception, { req ->
                 req.request == request && req.response == response
-            }) >> entity
-            1 * returnValueHandler.handleReturnValue(entity, _, _ as ModelAndViewContainer, { req ->
+            }) >> respEntity
+            1 * responseProc.handleReturnValue(respEntity, _, _ as ModelAndViewContainer, { req ->
                 req.request == request && req.response == response
             })
     }
 
-    def 'find response factory and handle exception'() {
+    def 'resolve exception handler when multiple are available'() {
         setup:
             def factories = new RestExceptionHandler[3].collect{ Mock(RestExceptionHandler) }
-            def expected = new ResponseEntity(BAD_REQUEST)
         and:
             resolver.exceptionHandlers = [
                     (NumberFormatException): factories[2],
@@ -84,7 +86,7 @@ class RestHandlerExceptionResolverTest extends Specification {
         when:
             resolver.doResolveException(request, response, null, exception)
         then:
-            1 * factories[factoryNum].handleException(exception, _ as WebRequest) >> expected
+            1 * factories[factoryNum].handleException(exception, _ as WebRequest) >> respEntity
         where:
             exception                       | factoryNum
             new NumberFormatException()     | 2
@@ -92,14 +94,30 @@ class RestHandlerExceptionResolverTest extends Specification {
             new FileNotFoundException()     | 0
     }
 
-    def 'return null when no handler found'() {
+    def 'fallback to default media type when requested media type is not supported'() {
+        setup:
+            resolver.defaultContentType = APPLICATION_JSON
+        and:
+            responseFactory.handleException(*_) >> respEntity
+            responseProc.handleReturnValue(*_) >> { throw new HttpMediaTypeNotAcceptableException([]) }
+        when:
+            resolver.doResolveException(request, response, null, new Exception())
+        then:
+            1 * fallbackResponseProc.handleReturnValue(respEntity, _, _ as ModelAndViewContainer, { req ->
+                req.request == request && req.response == response
+            })
+    }
+
+    def 'return null when no exception handler is found'() {
+        setup:
+            resolver.exceptionHandlers = [:]
         expect:
             resolver.doResolveException(request, response, null, new IOException()) == null
     }
 
-    def 'return null when HttpEntityMethodProcessor throws an exception'() {
+    def 'return null when response processor throws an exception'() {
         setup:
-            returnValueHandler.handleReturnValue(*_) >> { throw new IllegalStateException() }
+            responseProc.handleReturnValue(*_) >> { throw new IllegalStateException() }
         expect:
             resolver.doResolveException(request, response, null, new IOException()) == null
     }

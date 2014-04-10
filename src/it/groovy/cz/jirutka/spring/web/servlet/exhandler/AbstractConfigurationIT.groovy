@@ -78,6 +78,16 @@ abstract class AbstractConfigurationIT extends Specification {
             }
     }
 
+    def 'Perform request with Accept that is not supported by exception handler'() {
+        when:
+            perform GET('/ping').with {
+                accept 'image/png'
+            }
+        then:
+            response.status      == 406
+            response.contentType == 'application/json;charset=UTF-8'
+    }
+
     def 'Perform request that causes user-defined exception with custom exception handler'() {
         when:
             perform GET('/dana')

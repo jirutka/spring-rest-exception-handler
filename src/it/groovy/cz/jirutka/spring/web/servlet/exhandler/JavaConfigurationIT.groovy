@@ -30,6 +30,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver
 
 import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT
+import static org.springframework.http.MediaType.APPLICATION_JSON
 
 @ContextConfiguration(classes=ContextConfig)
 class JavaConfigurationIT extends AbstractConfigurationIT {
@@ -47,6 +48,7 @@ class JavaConfigurationIT extends AbstractConfigurationIT {
         restExceptionResolver() {
             RestHandlerExceptionResolver.builder()
                     .messageSource(httpErrorMessageSource())
+                    .defaultContentType(APPLICATION_JSON)
                     .addErrorMessageHandler(HttpRequestMethodNotSupportedException, I_AM_A_TEAPOT)
                     .addHandler(ZuulException, new ZuulExceptionHandler())
                     .build()

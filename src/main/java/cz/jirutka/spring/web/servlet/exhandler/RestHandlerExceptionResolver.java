@@ -19,10 +19,14 @@ import cz.jirutka.spring.web.servlet.exhandler.handlers.RestExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.Assert;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.accept.FixedContentNegotiationStrategy;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -39,6 +43,7 @@ import java.util.Map;
 
 import static cz.jirutka.spring.web.servlet.exhandler.support.HttpMessageConverterUtils.getDefaultHttpMessageConverters;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.springframework.http.MediaType.APPLICATION_XML;
 
 public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolver implements InitializingBean {
 
@@ -50,8 +55,13 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
 
     private Map<Class<? extends Exception>, RestExceptionHandler> handlers = new LinkedHashMap<>();
 
+    private MediaType defaultContentType = APPLICATION_XML;
+
     // package visibility for tests
-    HandlerMethodReturnValueHandler returnValueHandler;
+    HandlerMethodReturnValueHandler responseProcessor;
+
+    // package visibility for tests
+    HandlerMethodReturnValueHandler fallbackResponseProcessor;
 
 
 
@@ -62,7 +72,9 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
 
     @Override
     public void afterPropertiesSet() {
-        returnValueHandler = new HttpEntityMethodProcessor(messageConverters, contentNegotiationManager);
+        responseProcessor = new HttpEntityMethodProcessor(messageConverters, contentNegotiationManager);
+        fallbackResponseProcessor = new HttpEntityMethodProcessor(messageConverters,
+                new ContentNegotiationManager(new FixedContentNegotiationStrategy(defaultContentType)));
     }
 
     @Override
@@ -70,7 +82,6 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
             HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
 
         ServletWebRequest webRequest = new ServletWebRequest(request, response);
-        ModelAndViewContainer mavContainer = new ModelAndViewContainer();
 
         ResponseEntity<?> entity;
         try {
@@ -80,7 +91,7 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
             return null;
         }
         try {
-            returnValueHandler.handleReturnValue(entity, null, mavContainer, webRequest);
+            processResponse(entity, webRequest);
         } catch (Exception ex) {
             LOG.error("Failed to process error response: {}", entity, ex);
             return null;
@@ -105,6 +116,18 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
             }
         }
         throw new NoExceptionHandlerFoundException();
+    }
+
+    protected void processResponse(ResponseEntity<?> entity, NativeWebRequest webRequest) throws Exception {
+
+        ModelAndViewContainer mavContainer = new ModelAndViewContainer();
+        try {
+            responseProcessor.handleReturnValue(entity, null, mavContainer, webRequest);
+
+        } catch (HttpMediaTypeNotAcceptableException ex) {
+            LOG.debug("Requested media type is not supported, falling back to default one");
+            fallbackResponseProcessor.handleReturnValue(entity, null, mavContainer, webRequest);
+        }
     }
 
 
@@ -140,6 +163,14 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     public ContentNegotiationManager getContentNegotiationManager() {
         return this.contentNegotiationManager;
+    }
+
+    public void setDefaultContentType(MediaType defaultContentType) {
+        this.defaultContentType = defaultContentType;
+    }
+
+    public MediaType getDefaultContentType() {
+        return defaultContentType;
     }
 
     public Map<Class<? extends Exception>, RestExceptionHandler> getExceptionHandlers() {

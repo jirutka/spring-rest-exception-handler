@@ -21,6 +21,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.Assert;
 import org.springframework.web.accept.ContentNegotiationManager;
@@ -37,6 +38,7 @@ public class RestHandlerExceptionResolverFactoryBean implements FactoryBean<Rest
     private MessageInterpolator messageInterpolator;
     private List<HttpMessageConverter<?>> httpMessageConverters;
     private ContentNegotiationManager contentNegotiationManager;
+    private String defaultContentType;
     private boolean withDefaultHandlers = true;
     private boolean withDefaultMessageSource = true;
     private Map<Class<? extends Exception>, ?> exceptionHandlers = emptyMap();
@@ -50,6 +52,7 @@ public class RestHandlerExceptionResolverFactoryBean implements FactoryBean<Rest
                 .messageInterpolator(messageInterpolator)
                 .httpMessageConverters(httpMessageConverters)
                 .contentNegotiationManager(contentNegotiationManager)
+                .defaultContentType(defaultContentType)
                 .withDefaultHandlers(withDefaultHandlers)
                 .withDefaultMessageSource(withDefaultMessageSource);
 
