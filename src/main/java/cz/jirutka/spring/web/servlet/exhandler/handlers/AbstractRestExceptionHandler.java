@@ -25,6 +25,9 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.lang.reflect.TypeVariable;
 
+/**
+ * The base implementation of the {@link RestExceptionHandler} interface.
+ */
 public abstract class AbstractRestExceptionHandler<E extends Exception, T> implements RestExceptionHandler<E, T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractRestExceptionHandler.class);
@@ -33,6 +36,11 @@ public abstract class AbstractRestExceptionHandler<E extends Exception, T> imple
     private final HttpStatus status;
 
 
+    /**
+     * This constructor determines the exception class from the generic class parameter {@code E}.
+     *
+     * @param status HTTP status
+     */
     protected AbstractRestExceptionHandler(HttpStatus status) {
         this.exceptionClass = determineTargetType();
         this.status = status;

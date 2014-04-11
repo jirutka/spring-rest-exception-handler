@@ -21,7 +21,6 @@ import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.Assert;
 import org.springframework.web.accept.ContentNegotiationManager;
@@ -34,14 +33,81 @@ import static java.util.Collections.emptyMap;
 @Setter
 public class RestHandlerExceptionResolverFactoryBean implements FactoryBean<RestHandlerExceptionResolver> {
 
-    private MessageSource messageSource;
-    private MessageInterpolator messageInterpolator;
-    private List<HttpMessageConverter<?>> httpMessageConverters;
+    /**
+     * The {@link ContentNegotiationManager} to use to determine requested media types.
+     * If not provided, the default instance of {@code ContentNegotiationManager} with the
+     * {@link org.springframework.web.accept.HeaderContentNegotiationStrategy HeaderContentNegotiationStrategy}
+     * will be used.
+     */
     private ContentNegotiationManager contentNegotiationManager;
+
+    /**
+     * The default content type that will be used as a fallback when the requested content type is
+     * not supported.
+     */
     private String defaultContentType;
-    private boolean withDefaultHandlers = true;
-    private boolean withDefaultMessageSource = true;
+
+    /**
+     * Mapping of exception handlers where the key is an exception type to handle and the value is
+     * either a HTTP status (this will register
+     * {@link cz.jirutka.spring.web.servlet.exhandler.handlers.ErrorMessageRestExceptionHandler
+     * ErrorMessageRestExceptionHandler}) and/or an instance of the {@link RestExceptionHandler}.
+     *
+     * <p>Each handler is also used for all the exception subtypes, when no more specific mapping
+     * is found.</p>
+     *
+     * <p><b>Example:</b>
+     * <pre>{@code
+     * <property name="exceptionHandlers">
+     *     <map>
+     *         <entry key="org.springframework.dao.EmptyResultDataAccessException" value="404" />
+     *         <entry key="org.example.MyException">
+     *             <bean class="org.example.MyExceptionHandler" />
+     *         </entry>
+     *     </map>
+     * </property>
+     * }</pre>
+     */
     private Map<Class<? extends Exception>, ?> exceptionHandlers = emptyMap();
+
+    /**
+     * The message body converters to use for converting an error message into HTTP response body.
+     * If not provided, the default converters will be used (see
+     * {@link cz.jirutka.spring.web.servlet.exhandler.support.HttpMessageConverterUtils#getDefaultHttpMessageConverters()
+     * getDefaultHttpMessageConverters()}).
+     */
+    private List<HttpMessageConverter<?>> httpMessageConverters;
+
+    /**
+     * The message interpolator to set into all exception handlers implementing
+     * {@link cz.jirutka.spring.web.servlet.exhandler.interpolators.MessageInterpolatorAware}
+     * interface, e.g. {@link cz.jirutka.spring.web.servlet.exhandler.handlers.ErrorMessageRestExceptionHandler}.
+     * Built-in exception handlers uses {@link cz.jirutka.spring.web.servlet.exhandler.interpolators.SpelMessageInterpolator
+     * SpelMessageInterpolator} by default.
+     */
+    private MessageInterpolator messageInterpolator;
+
+    /**
+     * The message source to set into all exception handlers implementing
+     * {@link org.springframework.context.MessageSourceAware MessageSourceAware} interface, e.g.
+     * {@link cz.jirutka.spring.web.servlet.exhandler.handlers.ErrorMessageRestExceptionHandler}.
+     * Required for built-in exception handlers.
+     */
+    private MessageSource messageSource;
+
+    /**
+     * Whether to register default exception handlers for Spring exceptions. These are registered
+     * <i>before</i> the provided exception handlers, so you can overwrite any of the default
+     * mappings. Default is <tt>true</tt>.
+     */
+    private boolean withDefaultHandlers = true;
+
+    /**
+     * Whether to use the default (built-in) message source as a fallback to resolve messages that
+     * the provided message source can't resolve. In other words, it sets the default message
+     * source as a <i>parent</i> of the provided message source. Default is <tt>true</tt>.
+     */
+    private boolean withDefaultMessageSource = true;
 
 
     @SuppressWarnings("unchecked")

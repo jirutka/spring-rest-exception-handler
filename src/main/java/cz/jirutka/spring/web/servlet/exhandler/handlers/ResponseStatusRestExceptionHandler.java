@@ -20,8 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
 /**
- * Simple implementation of {@link RestExceptionHandler} that returns response
- * with status code and no content.
+ * Simple {@link RestExceptionHandler} that just returns response with the specified status code
+ * and no content.
  */
 public class ResponseStatusRestExceptionHandler implements RestExceptionHandler<Exception, Void> {
 

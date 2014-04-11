@@ -18,12 +18,16 @@ package cz.jirutka.spring.web.servlet.exhandler.handlers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
+/**
+ * @param <E> Type of exception.
+ * @param <T> Type of response message (entity body).
+ */
 public interface RestExceptionHandler<E extends Exception, T> {
 
     /**
      * Handles exception and generates {@link ResponseEntity}.
      *
-     * @param exception The exception to get data from.
+     * @param exception The exception to handle and get data from.
      * @param request The current request.
      * @return A response entity.
      */

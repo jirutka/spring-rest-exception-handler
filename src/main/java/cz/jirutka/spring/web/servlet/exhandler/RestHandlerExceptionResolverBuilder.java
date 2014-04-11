@@ -60,19 +60,53 @@ public class RestHandlerExceptionResolverBuilder {
 
     private final Map<Class, RestExceptionHandler> exceptionHandlers = new HashMap<>();
 
-    private MessageSource messageSource;
-
-    private MessageInterpolator messageInterpolator;
-
-    private List<HttpMessageConverter<?>> httpMessageConverters;
-
-    private ContentNegotiationManager contentNegotiationManager;
-
     @Setter(NONE) // to not conflict with overloaded setter
     private MediaType defaultContentType;
 
+    /**
+     * The {@link ContentNegotiationManager} to use to determine requested media types.
+     * If not provided, the default instance of {@code ContentNegotiationManager} with the
+     * {@link org.springframework.web.accept.HeaderContentNegotiationStrategy HeaderContentNegotiationStrategy}
+     * will be used.
+     */
+    private ContentNegotiationManager contentNegotiationManager;
+
+    /**
+     * The message body converters to use for converting an error message into HTTP response body.
+     * If not provided, the default converters will be used (see
+     * {@link cz.jirutka.spring.web.servlet.exhandler.support.HttpMessageConverterUtils#getDefaultHttpMessageConverters()
+     * getDefaultHttpMessageConverters()}).
+     */
+    private List<HttpMessageConverter<?>> httpMessageConverters;
+
+    /**
+     * The message interpolator to set into all exception handlers implementing
+     * {@link cz.jirutka.spring.web.servlet.exhandler.interpolators.MessageInterpolatorAware}
+     * interface, e.g. {@link ErrorMessageRestExceptionHandler}. Built-in exception handlers uses
+     * {@link cz.jirutka.spring.web.servlet.exhandler.interpolators.SpelMessageInterpolator
+     * SpelMessageInterpolator} by default.
+     */
+    private MessageInterpolator messageInterpolator;
+
+    /**
+     * The message source to set into all exception handlers implementing
+     * {@link org.springframework.context.MessageSourceAware MessageSourceAware} interface, e.g.
+     * {@link ErrorMessageRestExceptionHandler}. Required for built-in exception handlers.
+     */
+    private MessageSource messageSource;
+
+    /**
+     * Whether to register default exception handlers for Spring exceptions. These are registered
+     * <i>before</i> the provided exception handlers, so you can overwrite any of the default
+     * mappings. Default is <tt>true</tt>.
+     */
     private boolean withDefaultHandlers = true;
 
+    /**
+     * Whether to use the default (built-in) message source as a fallback to resolve messages that
+     * the provided message source can't resolve. In other words, it sets the default message
+     * source as a <i>parent</i> of the provided message source. Default is <tt>true</tt>.
+     */
     private boolean withDefaultMessageSource = true;
 
 
@@ -122,16 +156,32 @@ public class RestHandlerExceptionResolverBuilder {
         return resolver;
     }
 
+    /**
+     * The default content type that will be used as a fallback when the requested content type is
+     * not supported.
+     */
     public RestHandlerExceptionResolverBuilder defaultContentType(MediaType mediaType) {
         this.defaultContentType = mediaType;
         return this;
     }
 
+    /**
+     * The default content type that will be used as a fallback when the requested content type is
+     * not supported.
+     */
     public RestHandlerExceptionResolverBuilder defaultContentType(String mediaType) {
         defaultContentType( hasText(mediaType) ? MediaType.parseMediaType(mediaType) : null );
         return this;
     }
 
+    /**
+     * Registers the given exception handler for the specified exception type. This handler will be
+     * also used for all the exception subtypes, when no more specific mapping is found.
+     *
+     * @param exceptionClass The exception type handled by the given handler.
+     * @param exceptionHandler An instance of the exception handler for the specified exception
+     *                         type or its subtypes.
+     */
     public <E extends Exception> RestHandlerExceptionResolverBuilder addHandler(
             Class<? extends E> exceptionClass, RestExceptionHandler<E, ?> exceptionHandler) {
 
@@ -139,12 +189,24 @@ public class RestHandlerExceptionResolverBuilder {
         return this;
     }
 
+    /**
+     * Same as {@link #addHandler(Class, RestExceptionHandler)}, but the exception type is
+     * determined from the handler.
+     */
     public <E extends Exception>
             RestHandlerExceptionResolverBuilder addHandler(AbstractRestExceptionHandler<E, ?> exceptionHandler) {
 
         return addHandler(exceptionHandler.getExceptionClass(), exceptionHandler);
     }
 
+    /**
+     * Registers {@link ErrorMessageRestExceptionHandler} for the specified exception type.
+     * This handler will be also used for all the exception subtypes, when no more specific mapping
+     * is found.
+     *
+     * @param exceptionClass The exception type to handle.
+     * @param status The HTTP status to map the specified exception to.
+     */
     public RestHandlerExceptionResolverBuilder addErrorMessageHandler(
             Class<? extends Exception> exceptionClass, HttpStatus status) {
 

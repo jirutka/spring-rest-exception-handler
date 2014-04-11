@@ -29,6 +29,13 @@ import org.springframework.util.Assert;
 
 import java.util.Map;
 
+/**
+ * Implementation of the {@link MessageInterpolator} that uses the Spring Expression Language
+ * (SpEL) to evaluate expressions inside a template message.
+ *
+ * <p>SpEL expressions are delimited by {@code #{} and {@code }}. The provided variables are
+ * accessible directly by name.</p>
+ */
 public class SpelMessageInterpolator implements MessageInterpolator {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpelMessageInterpolator.class);
@@ -36,11 +43,19 @@ public class SpelMessageInterpolator implements MessageInterpolator {
     private final EvaluationContext evalContext;
 
 
+    /**
+     * Creates a new instance with a custom {@link EvaluationContext}.
+     */
     public SpelMessageInterpolator(EvaluationContext evalContext) {
         Assert.notNull(evalContext, "EvaluationContext must not be null");
         this.evalContext = evalContext;
     }
 
+    /**
+     * Creates a new instance with {@link StandardEvaluationContext} including
+     * {@link org.springframework.expression.spel.support.ReflectivePropertyAccessor ReflectivePropertyAccessor}
+     * and {@link MapAccessor}.
+     */
     public SpelMessageInterpolator() {
         StandardEvaluationContext ctx = new StandardEvaluationContext();
         ctx.addPropertyAccessor(new MapAccessor());

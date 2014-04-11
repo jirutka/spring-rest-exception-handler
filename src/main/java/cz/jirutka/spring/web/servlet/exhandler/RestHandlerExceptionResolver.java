@@ -47,6 +47,15 @@ import static org.springframework.http.MediaType.APPLICATION_XML;
 import static org.springframework.web.context.request.WebRequest.SCOPE_REQUEST;
 import static org.springframework.web.servlet.HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE;
 
+/**
+ * A {@link org.springframework.web.servlet.HandlerExceptionResolver HandlerExceptionResolver}
+ * for RESTful APIs that resolves exceptions through the provided {@link RestExceptionHandler
+ * RestExceptionHandlers}.
+ *
+ * @see #builder()
+ * @see RestHandlerExceptionResolverBuilder
+ * @see RestHandlerExceptionResolverFactoryBean
+ */
 public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolver implements InitializingBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestHandlerExceptionResolver.class);
@@ -66,7 +75,9 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
     HandlerMethodReturnValueHandler fallbackResponseProcessor;
 
 
-
+    /**
+     * Returns a builder to build and configure instance of {@code RestHandlerExceptionResolver}.
+     */
     public static RestHandlerExceptionResolverBuilder builder() {
         return new RestHandlerExceptionResolverBuilder();
     }
@@ -138,44 +149,29 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
 
     //////// Accessors ////////
 
-    /**
-     * Set the message body converters to use.
-     * These converters are used to convert from and to HTTP requests and
-     * responses.
-     */
+    public List<HttpMessageConverter<?>> getMessageConverters() {
+        return messageConverters;
+    }
+
     public void setMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
         Assert.notNull(messageConverters, "messageConverters must not be null");
         this.messageConverters = messageConverters;
     }
 
-    /**
-     * Return the configured message body converters.
-     */
-    public List<HttpMessageConverter<?>> getMessageConverters() {
-        return messageConverters;
-    }
-
-    /**
-     * Set the {@link ContentNegotiationManager} to use to determine requested
-     * media types. If not set, the default constructor is used.
-     */
-    public void setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager) {
-        this.contentNegotiationManager = defaultIfNull(contentNegotiationManager, new ContentNegotiationManager());
-    }
-
-    /**
-     * Return the configured {@link ContentNegotiationManager}.
-     */
     public ContentNegotiationManager getContentNegotiationManager() {
         return this.contentNegotiationManager;
     }
 
-    public void setDefaultContentType(MediaType defaultContentType) {
-        this.defaultContentType = defaultContentType;
+    public void setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager) {
+        this.contentNegotiationManager = defaultIfNull(contentNegotiationManager, new ContentNegotiationManager());
     }
 
     public MediaType getDefaultContentType() {
         return defaultContentType;
+    }
+
+    public void setDefaultContentType(MediaType defaultContentType) {
+        this.defaultContentType = defaultContentType;
     }
 
     public Map<Class<? extends Exception>, RestExceptionHandler> getExceptionHandlers() {

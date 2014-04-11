@@ -35,6 +35,11 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
+/**
+ * {@link RestExceptionHandler} that produces {@link ErrorMessage}.
+ *
+ * @param <E> Type of exception.
+ */
 public class ErrorMessageRestExceptionHandler<E extends Exception>
         extends AbstractRestExceptionHandler<E, ErrorMessage> implements MessageSourceAware, MessageInterpolatorAware {
 
@@ -52,12 +57,20 @@ public class ErrorMessageRestExceptionHandler<E extends Exception>
     private MessageInterpolator interpolator = new SpelMessageInterpolator();
 
 
-    protected ErrorMessageRestExceptionHandler(HttpStatus status) {
-        super(status);
-    }
-
+    /**
+     * @param exceptionClass Type of the handled exceptions; it's used as a prefix of key to
+     *                       resolve messages (via MessageSource).
+     * @param status HTTP status that will be sent to client.
+     */
     public ErrorMessageRestExceptionHandler(Class<E> exceptionClass, HttpStatus status) {
         super(exceptionClass, status);
+    }
+
+    /**
+     * @see AbstractRestExceptionHandler#AbstractRestExceptionHandler(HttpStatus) AbstractRestExceptionHandler
+     */
+    protected ErrorMessageRestExceptionHandler(HttpStatus status) {
+        super(status);
     }
 
 

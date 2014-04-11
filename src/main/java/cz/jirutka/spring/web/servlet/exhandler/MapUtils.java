@@ -19,6 +19,14 @@ import java.util.Map;
 
 abstract class MapUtils {
 
+    /**
+     * Puts entries from the {@code source} map into the {@code target} map, but without overriding
+     * any existing entry in {@code target} map, i.e. put only if the key does not exist in the
+     * {@code target} map.
+     *
+     * @param target The target map where to put new entries.
+     * @param source The source map from which read the entries.
+     */
     static <K, V> void putAllIfAbsent(Map<K, V> target, Map<K, V> source) {
 
         for (Map.Entry<K, V> entry : source.entrySet()) {

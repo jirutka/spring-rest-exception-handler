@@ -33,21 +33,19 @@ public abstract class HttpMessageConverterUtils {
     private static final ClassLoader CLASSLOADER = HttpMessageConverterUtils.class.getClassLoader();
 
     /**
-     * Determine whether a JAXB binder is present on the classpath and can be
-     * loaded. Will return <tt>false</tt> if either the
-     * {@link javax.xml.bind.Binder} or one of its dependencies is not present
-     * or cannot be loaded.
+     * Determine whether a JAXB binder is present on the classpath and can be loaded. Will return
+     * <tt>false</tt> if either the {@link javax.xml.bind.Binder} or one of its dependencies is not
+     * present or cannot be loaded.
      */
     public static boolean isJaxb2Present() {
         return ClassUtils.isPresent("javax.xml.bind.Binder", CLASSLOADER);
     }
 
     /**
-     * Determine whether Jackson 2.x is present on the classpath and can be
-     * loaded. Will return <tt>false</tt> if either the
-     * {@link com.fasterxml.jackson.databind.ObjectMapper},
-     * {@link com.fasterxml.jackson.core.JsonGenerator} or one of its
-     * dependencies is not present or cannot be loaded.
+     * Determine whether Jackson 2.x is present on the classpath and can be loaded. Will return
+     * <tt>false</tt> if either the {@link com.fasterxml.jackson.databind.ObjectMapper},
+     * {@link com.fasterxml.jackson.core.JsonGenerator} or one of its dependencies is not present
+     * or cannot be loaded.
      */
     public static boolean isJackson2Present() {
         return ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper", CLASSLOADER) &&
@@ -55,11 +53,10 @@ public abstract class HttpMessageConverterUtils {
     }
 
     /**
-     * Determine whether Jackson 1.x is present on the classpath and can be
-     * loaded. Will return <tt>false</tt> if either the
-     * {@link org.codehaus.jackson.map.ObjectMapper},
-     * {@link org.codehaus.jackson.JsonGenerator} or one of its dependencies is
-     * not present or cannot be loaded.
+     * Determine whether Jackson 1.x is present on the classpath and can be loaded. Will return
+     * <tt>false</tt> if either the {@link org.codehaus.jackson.map.ObjectMapper},
+     * {@link org.codehaus.jackson.JsonGenerator} or one of its dependencies is not present or
+     * cannot be loaded.
      */
     public static boolean isJacksonPresent() {
         return ClassUtils.isPresent("org.codehaus.jackson.map.ObjectMapper", CLASSLOADER) &&
@@ -78,8 +75,8 @@ public abstract class HttpMessageConverterUtils {
      *     <li>{@linkplain MappingJacksonHttpMessageConverter} (when Jackson 1.x is present and 2.x not)</li>
      * </ul>
      *
-     * <p>Note: It does not return all of the default converters defined in
-     * Spring, but just thus usable for exception responses.</p>
+     * <p>Note: It does not return all of the default converters defined in Spring, but just thus
+     * usable for exception responses.</p>
      */
     @SuppressWarnings("deprecation")
     public static List<HttpMessageConverter<?>> getDefaultHttpMessageConverters() {

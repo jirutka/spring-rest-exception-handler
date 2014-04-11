@@ -19,5 +19,12 @@ import java.util.Map;
 
 public interface MessageInterpolator {
 
+    /**
+     * Interpolates the message template using the given variables.
+     *
+     * @param messageTemplate The message to interpolate.
+     * @param variables Map of variables that will be accessible for the template.
+     * @return An interpolated message.
+     */
     String interpolate(String messageTemplate, Map<String, Object> variables);
 }
