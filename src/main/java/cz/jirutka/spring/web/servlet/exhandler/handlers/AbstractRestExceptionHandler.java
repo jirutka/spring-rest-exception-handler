@@ -18,6 +18,8 @@ package cz.jirutka.spring.web.servlet.exhandler.handlers;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ import java.lang.reflect.TypeVariable;
  */
 public abstract class AbstractRestExceptionHandler<E extends Exception, T> implements RestExceptionHandler<E, T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractRestExceptionHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RestExceptionHandler.class);
 
     private final Class<E> exceptionClass;
     private final HttpStatus status;
@@ -62,6 +64,8 @@ public abstract class AbstractRestExceptionHandler<E extends Exception, T> imple
 
     public ResponseEntity<T> handleException(E ex, HttpServletRequest req) {
 
+        logException(ex, req);
+
         T body = createBody(ex, req);
         HttpHeaders headers = createHeaders(ex, req);
 
@@ -79,6 +83,37 @@ public abstract class AbstractRestExceptionHandler<E extends Exception, T> imple
 
     protected HttpHeaders createHeaders(E ex, HttpServletRequest req) {
         return new HttpHeaders();
+    }
+
+    /**
+     * Logs the exception; on ERROR level when status is 5xx, otherwise on INFO level without stack
+     * trace, or DEBUG level with stack trace. The logger name is
+     * {@code cz.jirutka.spring.web.servlet.exhandler.handlers.RestExceptionHandler}.
+     *
+     * @param ex The exception to log.
+     * @param req The current web request.
+     */
+    protected void logException(E ex, HttpServletRequest req) {
+
+        if (getStatus().is5xxServerError() || LOG.isInfoEnabled()) {
+            Marker marker = MarkerFactory.getMarker(ex.getClass().getName());
+
+            String uri = req.getRequestURI();
+            if (req.getQueryString() != null) {
+                uri += '?' + req.getQueryString();
+            }
+            String msg = String.format("%s %s ~> %s", req.getMethod(), uri, getStatus());
+
+            if (getStatus().is5xxServerError()) {
+                LOG.error(marker, msg, ex);
+
+            } else if (LOG.isDebugEnabled()) {
+                LOG.debug(marker, msg, ex);
+
+            } else {
+                LOG.info(marker, msg);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

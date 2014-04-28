@@ -175,6 +175,14 @@ Builder and FactoryBean registers set of the default handlers by default. This c
 `withDefaultHandlers` to false.
 
 
+### Exception logging
+
+Exceptions handled with status code 5×× are logged on ERROR level (incl. stack trace), other exceptions are logged on
+INFO level without a stack trace, or on DEBUG level with a stack trace if enabled. The logger name is
+`cz.jirutka.spring.web.servlet.exhandler.handlers.RestExceptionHandler` and a Marker is set to the exception’s full
+qualified name.
+
+
 ### Why is 404 bypassing exception handler?
 
 When the [DispatcherServlet] is unable to determine a corresponding handler for an incoming HTTP request, it sends 404

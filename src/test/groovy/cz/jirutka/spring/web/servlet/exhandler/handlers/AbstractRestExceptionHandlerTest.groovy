@@ -15,14 +15,21 @@
  */
 package cz.jirutka.spring.web.servlet.exhandler.handlers
 
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.LoggingEvent
+import ch.qos.logback.core.Appender
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import javax.servlet.http.HttpServletRequest
 
+import static ch.qos.logback.classic.Level.*
 import static org.springframework.http.HttpStatus.BAD_REQUEST
 
 class AbstractRestExceptionHandlerTest extends Specification {
@@ -50,5 +57,35 @@ class AbstractRestExceptionHandlerTest extends Specification {
             def actual = factory.handleException(ex, req)
         then:
             actual == expected
+    }
+
+    @Unroll
+    def 'log exception with status #status on level #expectedLevel #stackTrace'() {
+        setup:
+            def factory = new AbstractRestExceptionHandler<Exception, ErrorMessage>(HttpStatus.valueOf(status)) {
+                ErrorMessage createBody(Exception ex, HttpServletRequest req) { null }
+            }
+            def exception = new IOException()
+            def logAppender = Mock(Appender)
+            LoggingEvent actual = null
+        and:
+            (LoggerFactory.getLogger(RestExceptionHandler) as Logger).with {
+                level = loggerLevel
+                addAppender(logAppender)
+            }
+        when:
+            factory.handleException(exception, new MockHttpServletRequest())
+        then:
+            1 * logAppender.doAppend({ actual = it })
+            actual.level == expectedLevel
+            actual.marker.name == exception.class.name
+            actual.throwableProxy == null ^ hasThrowable
+        where:
+            status | loggerLevel | expectedLevel | hasThrowable
+            503    | INFO        | ERROR         | true
+            404    | INFO        | INFO          | false
+            404    | TRACE       | DEBUG         | true
+
+            stackTrace = "${hasThrowable ? 'with' : 'without'} stack trace"
     }
 }

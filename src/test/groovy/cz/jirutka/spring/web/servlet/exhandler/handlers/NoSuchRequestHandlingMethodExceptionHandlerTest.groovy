@@ -37,7 +37,7 @@ class NoSuchRequestHandlingMethodExceptionHandlerTest extends Specification {
             }
             def exception = new NoSuchRequestHandlingMethodException(new MockHttpServletRequest())
         when:
-            handler.handleException(exception, null)
+            handler.handleException(exception, new MockHttpServletRequest())
         then:
             1 * logAppender.doAppend({ LoggingEvent it ->
                 it.message    == exception.message &&

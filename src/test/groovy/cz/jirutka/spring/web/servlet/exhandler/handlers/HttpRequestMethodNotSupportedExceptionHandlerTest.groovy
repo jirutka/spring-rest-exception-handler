@@ -19,6 +19,7 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.LoggingEvent
 import ch.qos.logback.core.Appender
 import org.slf4j.LoggerFactory
+import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.servlet.DispatcherServlet
 import spock.lang.Specification
@@ -29,13 +30,14 @@ import static org.springframework.http.HttpMethod.PUT
 class HttpRequestMethodNotSupportedExceptionHandlerTest extends Specification {
 
     def handler = new HttpRequestMethodNotSupportedExceptionHandler()
+    def request = new MockHttpServletRequest()
 
 
     def 'create headers with "Allow" when supported methods are specified'() {
         given:
             def exception = new HttpRequestMethodNotSupportedException('PATCH', ['PUT', 'POST'])
         when:
-            def headers = handler.createHeaders(exception, null)
+            def headers = handler.createHeaders(exception, request)
         then:
             headers.getAllow() == [PUT, POST] as Set
     }
@@ -44,7 +46,7 @@ class HttpRequestMethodNotSupportedExceptionHandlerTest extends Specification {
         given:
             def exception = new HttpRequestMethodNotSupportedException('PATCH')
         when:
-            def result = handler.createHeaders(exception, null)
+            def result = handler.createHeaders(exception, request)
         then:
             ! result.get('Allow')
     }
@@ -59,7 +61,7 @@ class HttpRequestMethodNotSupportedExceptionHandlerTest extends Specification {
             }
             def exception = new HttpRequestMethodNotSupportedException('PUT')
         when:
-            spiedHandler.handleException(exception, null)
+            spiedHandler.handleException(exception, request)
         then:
             1 * logAppender.doAppend({ LoggingEvent it ->
                 it.message    == exception.message &&
