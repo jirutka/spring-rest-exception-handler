@@ -9,7 +9,7 @@
         </encoder>
     </appender>
 
-    <logger name="cz.jirutka.spring.web.servlet.exhandler" level="TRACE" />
+    <logger name="cz.jirutka.spring.exhandler" level="TRACE" />
 
     <root level="WARN">
         <appender-ref ref="STDOUT" />

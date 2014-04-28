@@ -19,14 +19,14 @@
         </property>
     </bean>
 
-    <bean id="restExceptionResolver" class="cz.jirutka.spring.web.servlet.exhandler.RestHandlerExceptionResolverFactoryBean">
+    <bean id="restExceptionResolver" class="cz.jirutka.spring.exhandler.RestHandlerExceptionResolverFactoryBean">
         <property name="messageSource" ref="httpErrorMessageSource" />
         <property name="defaultContentType" value="application/json" />
         <property name="exceptionHandlers">
             <map>
                 <entry key="org.springframework.web.HttpRequestMethodNotSupportedException" value="418" />
-                <entry key="cz.jirutka.spring.web.servlet.exhandler.fixtures.ZuulException">
-                    <bean class="cz.jirutka.spring.web.servlet.exhandler.fixtures.ZuulExceptionHandler" />
+                <entry key="cz.jirutka.spring.exhandler.fixtures.ZuulException">
+                    <bean class="cz.jirutka.spring.exhandler.fixtures.ZuulExceptionHandler" />
                 </entry>
             </map>
         </property>
@@ -38,6 +38,6 @@
           p:basename="classpath:/testMessages"
           p:defaultEncoding="UTF-8" />
 
-    <bean class="cz.jirutka.spring.web.servlet.exhandler.fixtures.SampleController" />
+    <bean class="cz.jirutka.spring.exhandler.fixtures.SampleController" />
 
 </beans>

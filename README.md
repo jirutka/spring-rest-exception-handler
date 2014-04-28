@@ -143,7 +143,7 @@ public class RestContextConfig extends WebMvcConfigurerAdapter {
 </bean>
 
 <bean id="restExceptionResolver"
-      class="cz.jirutka.spring.web.servlet.exhandler.RestHandlerExceptionResolverFactoryBean">
+      class="cz.jirutka.spring.exhandler.RestHandlerExceptionResolverFactoryBean">
     <property name="messageSource" ref="httpErrorMessageSource" />
     <property name="defaultContentType" value="application/json" />
     <property name="exceptionHandlers">
@@ -179,7 +179,7 @@ Builder and FactoryBean registers set of the default handlers by default. This c
 
 Exceptions handled with status code 5×× are logged on ERROR level (incl. stack trace), other exceptions are logged on
 INFO level without a stack trace, or on DEBUG level with a stack trace if enabled. The logger name is
-`cz.jirutka.spring.web.servlet.exhandler.handlers.RestExceptionHandler` and a Marker is set to the exception’s full
+`cz.jirutka.spring.exhandler.handlers.RestExceptionHandler` and a Marker is set to the exception’s full
 qualified name.
 
 
@@ -259,4 +259,4 @@ This project is licensed under [Apache License 2.0](http://www.apache.org/licens
 [SpEL]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/expressions.html
 [HttpServletRequest]: http://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletRequest.html
 
-[messages.properties]: src/main/resources/cz/jirutka/spring/web/servlet/exhandler/messages.properties
+[messages.properties]: src/main/resources/cz/jirutka/spring/exhandler/messages.properties
