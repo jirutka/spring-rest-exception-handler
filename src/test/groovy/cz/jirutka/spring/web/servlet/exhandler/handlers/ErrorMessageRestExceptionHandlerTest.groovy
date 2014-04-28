@@ -19,7 +19,7 @@ import cz.jirutka.spring.web.servlet.exhandler.interpolators.MessageInterpolator
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage
 import org.springframework.beans.TypeMismatchException
 import org.springframework.context.MessageSource
-import org.springframework.web.context.request.WebRequest
+import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -34,7 +34,7 @@ class ErrorMessageRestExceptionHandlerTest extends Specification {
 
     def messageSource = Mock(MessageSource)
     def interpolator = Mock(MessageInterpolator)
-    def request = Mock(WebRequest)
+    def request = new MockHttpServletRequest()
 
     def handler = Spy(ErrorMessageRestExceptionHandler, constructorArgs: [exceptionClass, BAD_REQUEST])
 
@@ -68,7 +68,7 @@ class ErrorMessageRestExceptionHandlerTest extends Specification {
             def ex = new TypeMismatchException(1, String)
             def msgTemplate = 'Type mismatch on value: #{value}'
             def msg = 'Type mismatch on value: 1'
-            request.getLocale() >> JAPANESE
+            request.setPreferredLocales([JAPANESE])
         when:
             def result = handler.resolveMessage('detail', ex, request)
         then:

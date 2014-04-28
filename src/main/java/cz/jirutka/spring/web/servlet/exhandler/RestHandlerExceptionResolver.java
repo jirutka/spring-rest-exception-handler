@@ -28,7 +28,6 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.accept.FixedContentNegotiationStrategy;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.ModelAndView;
@@ -44,7 +43,6 @@ import java.util.Map;
 import static cz.jirutka.spring.web.servlet.exhandler.support.HttpMessageConverterUtils.getDefaultHttpMessageConverters;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.springframework.http.MediaType.APPLICATION_XML;
-import static org.springframework.web.context.request.WebRequest.SCOPE_REQUEST;
 import static org.springframework.web.servlet.HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE;
 
 /**
@@ -94,17 +92,15 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
     protected ModelAndView doResolveException(
             HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
 
-        ServletWebRequest webRequest = new ServletWebRequest(request, response);
-
         ResponseEntity<?> entity;
         try {
-            entity = handleException(exception, webRequest);
+            entity = handleException(exception, request);
         } catch (NoExceptionHandlerFoundException ex) {
             LOG.warn("No exception handler found to handle exception: {}", exception.getClass().getName());
             return null;
         }
         try {
-            processResponse(entity, webRequest);
+            processResponse(entity, new ServletWebRequest(request, response));
         } catch (Exception ex) {
             LOG.error("Failed to process error response: {}", entity, ex);
             return null;
@@ -112,10 +108,10 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
         return new ModelAndView();
     }
 
-    protected ResponseEntity<?> handleException(Exception exception, WebRequest request) {
+    protected ResponseEntity<?> handleException(Exception exception, HttpServletRequest request) {
         // See http://stackoverflow.com/a/12979543/2217862
         // This attribute is never set in MockMvc, so it's not covered in integration test.
-        request.removeAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, SCOPE_REQUEST);
+        request.removeAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
 
         RestExceptionHandler<Exception, ?> handler = resolveExceptionHandler(exception.getClass());
 

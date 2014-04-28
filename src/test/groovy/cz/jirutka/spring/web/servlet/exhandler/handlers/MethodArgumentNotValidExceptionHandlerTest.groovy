@@ -16,8 +16,8 @@
 package cz.jirutka.spring.web.servlet.exhandler.handlers
 
 import cz.jirutka.spring.web.servlet.exhandler.messages.ValidationErrorMessage
+import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.bind.MethodArgumentNotValidException
-import org.springframework.web.context.request.WebRequest
 import spock.lang.Specification
 
 import static cz.jirutka.spring.web.servlet.exhandler.test.BindingResultBuilder.createBindingResult
@@ -27,7 +27,7 @@ class MethodArgumentNotValidExceptionHandlerTest extends Specification {
     def handler = Spy(MethodArgumentNotValidExceptionHandler) {
         resolveMessage(*_) >> ''
     }
-    def request = Stub(WebRequest)
+    def request = new MockHttpServletRequest()
 
 
     def 'create ValidationProblem with validation errors'() {

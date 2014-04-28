@@ -18,11 +18,12 @@ package cz.jirutka.spring.web.servlet.exhandler.fixtures
 import cz.jirutka.spring.web.servlet.exhandler.handlers.RestExceptionHandler
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.context.request.WebRequest
+
+import javax.servlet.http.HttpServletRequest
 
 class ZuulExceptionHandler implements RestExceptionHandler<ZuulException, Integer> {
 
-    ResponseEntity<String> handleException(ZuulException exception, WebRequest request) {
+    ResponseEntity<String> handleException(ZuulException exception, HttpServletRequest request) {
         new ResponseEntity<String>("There's no Dana, only Zuul!", HttpStatus.NOT_FOUND)
     }
 }

@@ -20,9 +20,10 @@ import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -37,7 +38,7 @@ public class NoSuchRequestHandlingMethodExceptionHandler
     }
 
     @Override
-    public ResponseEntity<ErrorMessage> handleException(NoSuchRequestHandlingMethodException ex, WebRequest req) {
+    public ResponseEntity<ErrorMessage> handleException(NoSuchRequestHandlingMethodException ex, HttpServletRequest req) {
 
         LOG.warn(ex.getMessage());
         return super.handleException(ex, req);

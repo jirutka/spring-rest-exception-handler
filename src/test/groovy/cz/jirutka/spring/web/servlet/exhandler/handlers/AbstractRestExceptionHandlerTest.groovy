@@ -18,8 +18,10 @@ package cz.jirutka.spring.web.servlet.exhandler.handlers
 import cz.jirutka.spring.web.servlet.exhandler.messages.ErrorMessage
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
-import org.springframework.web.context.request.WebRequest
+import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Specification
+
+import javax.servlet.http.HttpServletRequest
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST
 
@@ -28,7 +30,7 @@ class AbstractRestExceptionHandlerTest extends Specification {
     def 'determine exception class from generic type'() {
         given:
             def factory = new AbstractRestExceptionHandler<IOException, ErrorMessage>(BAD_REQUEST) {
-                ErrorMessage createBody(IOException ex, WebRequest req) { null}
+                ErrorMessage createBody(IOException ex, HttpServletRequest req) { null}
             }
         expect:
             factory.exceptionClass == IOException
@@ -37,7 +39,7 @@ class AbstractRestExceptionHandlerTest extends Specification {
     def 'handle exception using createHeaders, createBody and getStatus methods'() {
         setup:
             def ex = new IOException()
-            def req = Mock(WebRequest)
+            def req = new MockHttpServletRequest()
             def expected = new ResponseEntity(new ErrorMessage(), new HttpHeaders(date: 123), BAD_REQUEST)
         and:
             def factory = Spy(AbstractRestExceptionHandler, constructorArgs: [IOException, expected.statusCode]) {

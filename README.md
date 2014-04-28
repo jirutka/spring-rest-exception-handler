@@ -72,7 +72,8 @@ The key name is prefixed with a fully qualified class name of the Java exception
 this is used when no value for a particular exception class exists (even in the parent message source).
 
 Value is a message templates that may contain [SpEL] expressions delimited by `#{` and `}`. Inside an expression, you
-can access the exception being handled and the current request under the `ex`, resp. `req` variables.
+can access the exception being handled and the current request (instance of [HttpServletRequest]) under the `ex`, resp.
+`req` variables.
 
 **For an example:**
 
@@ -248,5 +249,6 @@ This project is licensed under [Apache License 2.0](http://www.apache.org/licens
 [DispatcherServlet]: http://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
 [MessageSource]: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/MessageSource.html
 [SpEL]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/expressions.html
+[HttpServletRequest]: http://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletRequest.html
 
 [messages.properties]: src/main/resources/cz/jirutka/spring/web/servlet/exhandler/messages.properties

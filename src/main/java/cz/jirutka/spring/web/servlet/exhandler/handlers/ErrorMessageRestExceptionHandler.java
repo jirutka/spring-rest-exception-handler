@@ -26,8 +26,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
-import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Locale;
@@ -74,7 +74,7 @@ public class ErrorMessageRestExceptionHandler<E extends Exception>
     }
 
 
-    public ErrorMessage createBody(E ex, WebRequest req) {
+    public ErrorMessage createBody(E ex, HttpServletRequest req) {
 
         ErrorMessage m = new ErrorMessage();
         m.setType(URI.create(resolveMessage(TYPE_KEY, ex, req)));
@@ -87,7 +87,7 @@ public class ErrorMessageRestExceptionHandler<E extends Exception>
     }
 
 
-    protected String resolveMessage(String key, E exception, WebRequest request) {
+    protected String resolveMessage(String key, E exception, HttpServletRequest request) {
 
         String template = getMessage(key, request.getLocale());
 

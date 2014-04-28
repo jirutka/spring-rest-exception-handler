@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.TypeVariable;
 
 /**
@@ -55,12 +55,12 @@ public abstract class AbstractRestExceptionHandler<E extends Exception, T> imple
 
     ////// Abstract methods //////
 
-    public abstract T createBody(E ex, WebRequest req);
+    public abstract T createBody(E ex, HttpServletRequest req);
 
 
     ////// Template methods //////
 
-    public ResponseEntity<T> handleException(E ex, WebRequest req) {
+    public ResponseEntity<T> handleException(E ex, HttpServletRequest req) {
 
         T body = createBody(ex, req);
         HttpHeaders headers = createHeaders(ex, req);
@@ -77,7 +77,7 @@ public abstract class AbstractRestExceptionHandler<E extends Exception, T> imple
     }
 
 
-    protected HttpHeaders createHeaders(E ex, WebRequest req) {
+    protected HttpHeaders createHeaders(E ex, HttpServletRequest req) {
         return new HttpHeaders();
     }
 

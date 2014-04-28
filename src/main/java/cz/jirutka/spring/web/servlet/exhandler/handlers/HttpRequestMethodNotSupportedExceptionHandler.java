@@ -21,8 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.DispatcherServlet;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -38,14 +39,14 @@ public class HttpRequestMethodNotSupportedExceptionHandler
     }
 
     @Override
-    public ResponseEntity<ErrorMessage> handleException(HttpRequestMethodNotSupportedException ex, WebRequest req) {
+    public ResponseEntity<ErrorMessage> handleException(HttpRequestMethodNotSupportedException ex, HttpServletRequest req) {
         LOG.warn(ex.getMessage());
 
         return super.handleException(ex, req);
     }
 
     @Override
-    protected HttpHeaders createHeaders(HttpRequestMethodNotSupportedException ex, WebRequest req) {
+    protected HttpHeaders createHeaders(HttpRequestMethodNotSupportedException ex, HttpServletRequest req) {
 
         HttpHeaders headers = super.createHeaders(ex, req);
 

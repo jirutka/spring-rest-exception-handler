@@ -21,7 +21,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
@@ -33,7 +34,7 @@ public class MethodArgumentNotValidExceptionHandler extends ErrorMessageRestExce
     }
 
     @Override
-    public ValidationErrorMessage createBody(MethodArgumentNotValidException ex, WebRequest req) {
+    public ValidationErrorMessage createBody(MethodArgumentNotValidException ex, HttpServletRequest req) {
 
         ErrorMessage tmpl = super.createBody(ex, req);
         ValidationErrorMessage msg = new ValidationErrorMessage(tmpl);

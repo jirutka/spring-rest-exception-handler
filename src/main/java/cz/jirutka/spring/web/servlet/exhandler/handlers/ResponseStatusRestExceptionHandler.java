@@ -17,7 +17,8 @@ package cz.jirutka.spring.web.servlet.exhandler.handlers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Simple {@link RestExceptionHandler} that just returns response with the specified status code
@@ -32,7 +33,7 @@ public class ResponseStatusRestExceptionHandler implements RestExceptionHandler<
         this.status = status;
     }
 
-    public ResponseEntity<Void> handleException(Exception ex, WebRequest request) {
+    public ResponseEntity<Void> handleException(Exception ex, HttpServletRequest request) {
         return new ResponseEntity<>(status);
     }
 }

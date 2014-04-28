@@ -21,12 +21,12 @@ import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.web.HttpMediaTypeNotAcceptableException
 import org.springframework.web.bind.ServletRequestBindingException
-import org.springframework.web.context.request.WebRequest
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler
 import org.springframework.web.method.support.ModelAndViewContainer
 import org.springframework.web.servlet.mvc.method.annotation.HttpEntityMethodProcessor
 import spock.lang.Specification
 
+import javax.servlet.http.HttpServletRequest
 import java.security.InvalidParameterException
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST
@@ -67,9 +67,7 @@ class RestHandlerExceptionResolverTest extends Specification {
         when:
             resolver.doResolveException(request, response, null, exception)
         then:
-            1 * responseFactory.handleException(exception, { req ->
-                req.request == request && req.response == response
-            }) >> respEntity
+            1 * responseFactory.handleException(exception, request) >> respEntity
             1 * responseProc.handleReturnValue(respEntity, _, _ as ModelAndViewContainer, { req ->
                 req.request == request && req.response == response
             })
@@ -87,7 +85,7 @@ class RestHandlerExceptionResolverTest extends Specification {
         when:
             resolver.doResolveException(request, response, null, exception)
         then:
-            1 * factories[factoryNum].handleException(exception, _ as WebRequest) >> respEntity
+            1 * factories[factoryNum].handleException(exception, _ as HttpServletRequest) >> respEntity
         where:
             exception                       | factoryNum
             new NumberFormatException()     | 2
