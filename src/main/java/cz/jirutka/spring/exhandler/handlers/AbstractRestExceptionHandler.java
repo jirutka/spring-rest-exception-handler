@@ -95,7 +95,7 @@ public abstract class AbstractRestExceptionHandler<E extends Exception, T> imple
      */
     protected void logException(E ex, HttpServletRequest req) {
 
-        if (getStatus().is5xxServerError() || LOG.isInfoEnabled()) {
+        if (LOG.isErrorEnabled() && getStatus().value() >= 500 || LOG.isInfoEnabled()) {
             Marker marker = MarkerFactory.getMarker(ex.getClass().getName());
 
             String uri = req.getRequestURI();
@@ -104,7 +104,7 @@ public abstract class AbstractRestExceptionHandler<E extends Exception, T> imple
             }
             String msg = String.format("%s %s ~> %s", req.getMethod(), uri, getStatus());
 
-            if (getStatus().is5xxServerError()) {
+            if (getStatus().value() >= 500) {
                 LOG.error(marker, msg, ex);
 
             } else if (LOG.isDebugEnabled()) {

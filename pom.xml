@@ -56,9 +56,8 @@
     <!--//////////////////// PROPERTIES ////////////////////-->
 
     <properties>
-        <!-- Older versions does not contain NoHandlerFoundException.class,
-            but beside that it can be used. -->
-        <spring.version>[4.0.0.RELEASE,)</spring.version>
+        <!-- Recommended version is 4.0.0 or newer -->
+        <spring.version>[3.2.0.RELEASE,)</spring.version>
         <jackson.version>2.3.2</jackson.version>
     </properties>
 
@@ -76,14 +75,14 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>${jackson.version}</version>
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.13</version>
-            <scope>provided</scope>
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>org.codehaus.jackson</groupId>
@@ -248,4 +247,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+
+            <properties>
+                <spring.version>4.0.3.RELEASE</spring.version>
+            </properties>
+        </profile>
+    </profiles>
 </project>

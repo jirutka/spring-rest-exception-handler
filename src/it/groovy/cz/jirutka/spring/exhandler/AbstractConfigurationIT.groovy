@@ -17,6 +17,7 @@ package cz.jirutka.spring.exhandler
 
 import groovy.json.JsonSlurper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -24,6 +25,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 import spock.lang.Specification
+
+import static org.springframework.http.MediaType.TEXT_PLAIN
+import static org.springframework.http.MediaType.APPLICATION_JSON
 
 @WebAppConfiguration
 abstract class AbstractConfigurationIT extends Specification {
@@ -55,7 +59,7 @@ abstract class AbstractConfigurationIT extends Specification {
     def 'Perform request that results in success response'() {
         when:
             perform GET('/ping').with {
-                accept 'text/plain'
+                accept TEXT_PLAIN
             }
         then:
             response.status == 200
@@ -64,7 +68,7 @@ abstract class AbstractConfigurationIT extends Specification {
     def 'Perform request that causes built-in exception handled by default handler'() {
         when:
             perform GET('/ping').with {
-                accept 'application/json'
+                accept APPLICATION_JSON
             }
         then:
             response.status      == 406
@@ -81,7 +85,7 @@ abstract class AbstractConfigurationIT extends Specification {
     def 'Perform request with Accept that is not supported by exception handler'() {
         when:
             perform GET('/ping').with {
-                accept 'image/png'
+                accept MediaType.valueOf('image/png')
             }
         then:
             response.status      == 406
@@ -110,7 +114,7 @@ abstract class AbstractConfigurationIT extends Specification {
     def 'Perform request that causes user-defined exception handled by @ExceptionHandler method'() {
         when:
             perform POST('/teapot').with {
-                accept 'application/json'
+                accept APPLICATION_JSON
             }
         then:
             response.status      == 418

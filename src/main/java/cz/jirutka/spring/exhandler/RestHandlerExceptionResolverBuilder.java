@@ -39,7 +39,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
-import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 import java.util.HashMap;
@@ -243,9 +242,15 @@ public class RestHandlerExceptionResolverBuilder {
         addHandlerTo( map, HttpMessageNotReadableException.class, UNPROCESSABLE_ENTITY );
         addHandlerTo( map, HttpMessageNotWritableException.class, INTERNAL_SERVER_ERROR );
         addHandlerTo( map, MissingServletRequestPartException.class, BAD_REQUEST );
-        addHandlerTo( map, NoHandlerFoundException.class, NOT_FOUND );
-        addHandlerTo( map, Exception.class, INTERNAL_SERVER_ERROR );
+        addHandlerTo(map, Exception.class, INTERNAL_SERVER_ERROR);
 
+        // this class didn't exist before Spring 4.0
+        try {
+            Class clazz = Class.forName("org.springframework.web.servlet.NoHandlerFoundException");
+            addHandlerTo(map, clazz, NOT_FOUND);
+        } catch (ClassNotFoundException ex) {
+            // ignore
+        }
         return map;
     }
 

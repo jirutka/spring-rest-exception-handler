@@ -15,24 +15,27 @@
  */
 package cz.jirutka.spring.exhandler.fixtures
 
+import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
 
 import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT
 import static org.springframework.web.bind.annotation.RequestMethod.GET
 import static org.springframework.web.bind.annotation.RequestMethod.POST
 
-@RestController
+@Controller
 @RequestMapping('/')
 class SampleController {
 
+    @ResponseBody
     @RequestMapping(value='/ping', method=GET, produces='text/plain')
     String getPing() {
         'pong!'
     }
 
+    @ResponseBody
     @RequestMapping(value='/dana', method=GET)
     String getDana() {
         throw new ZuulException()
@@ -44,6 +47,7 @@ class SampleController {
     }
 
 
+    @ResponseBody
     @ResponseStatus(I_AM_A_TEAPOT)
     @ExceptionHandler(TeapotException)
     TeapotMessage handleException() {
