@@ -20,8 +20,12 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @param <E> Type of exception.
- * @param <T> Type of response message (entity body).
+ * Contract for classes generating a {@link ResponseEntity} for an instance of the specified
+ * Exception type, used in {@link cz.jirutka.spring.exhandler.RestHandlerExceptionResolver
+ * RestHandlerExceptionResolver}.
+ *
+ * @param <E> Type of the handled exception.
+ * @param <T> Type of the response message (entity body).
  */
 public interface RestExceptionHandler<E extends Exception, T> {
 

@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * {@link RestExceptionHandler} that produces {@link ErrorMessage}.
  *
- * @param <E> Type of exception.
+ * @param <E> Type of the handled exception.
  */
 public class ErrorMessageRestExceptionHandler<E extends Exception>
         extends AbstractRestExceptionHandler<E, ErrorMessage> implements MessageSourceAware, MessageInterpolatorAware {
