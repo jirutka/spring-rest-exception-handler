@@ -47,6 +47,11 @@
         <connection>scm:git:git@github.com:jirutka/spring-rest-exception-handler.git</connection>
     </scm>
 
+    <issueManagement>
+        <system>github</system>
+        <url>http://github.com/jirutka/spring-rest-exception-handler/issues</url>
+    </issueManagement>
+
     <ciManagement>
         <system>travis</system>
         <url>https://travis-ci.org/jirutka/spring-rest-exception-handler/</url>

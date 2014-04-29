@@ -71,7 +71,7 @@ factory bean).
 The key name is prefixed with a fully qualified class name of the Java exception, or `default` for the default value;
 this is used when no value for a particular exception class exists (even in the parent message source).
 
-Value is a message templates that may contain [SpEL] expressions delimited by `#{` and `}`. Inside an expression, you
+Value is a message template that may contain [SpEL] expressions delimited by `#{` and `}`. Inside an expression, you
 can access the exception being handled and the current request (instance of [HttpServletRequest]) under the `ex`, resp.
 `req` variables.
 
@@ -81,7 +81,7 @@ can access the exception being handled and the current request (instance of [Htt
 org.springframework.web.HttpMediaTypeNotAcceptableException.type=http://httpstatus.es/406
 org.springframework.web.HttpMediaTypeNotAcceptableException.title=Not Acceptable
 org.springframework.web.HttpMediaTypeNotAcceptableException.detail=\
-    This resource provides only #{ex.supportedMediaTypes}, but you've sent Accept #{req.getHeaderValues('Accept')}.
+    This resource provides #{ex.supportedMediaTypes}, but you've requested #{req.getHeader('Accept')}.
 ```
 
 
@@ -165,13 +165,16 @@ public class RestContextConfig extends WebMvcConfigurerAdapter {
       p:defaultEncoding="UTF-8" />
 ```
 
-### Notes
+### Another resolvers
 
-The ExceptionHandlerExceptionResolver is used to resolve exceptions through [@ExceptionHandler] methods. It must be
+The [ExceptionHandlerExceptionResolver] is used to resolve exceptions through [@ExceptionHandler] methods. It must be
 registered _before_ the RestHandlerExceptionResolver. If you don’t have any @ExceptionHandler methods, then you can
 omit the `exceptionHandlerExceptionResolver` bean declaration.
 
-Builder and FactoryBean registers set of the default handlers by default. This can be disabled by setting
+
+### Default handlers
+
+Builder and FactoryBean registers a set of the default handlers by default. This can be disabled by setting
 `withDefaultHandlers` to false.
 
 
@@ -187,9 +190,9 @@ qualified name.
 
 When the [DispatcherServlet] is unable to determine a corresponding handler for an incoming HTTP request, it sends 404
 directly without bothering to call an exception handler (see
-[on StackOverflow](http://stackoverflow.com/a/22751886/2217862)). This behaviour can be changed, since
-Spring version 4.0.0, using `throwExceptionIfNoHandlerFound` init parameter. You should set this to true for a
-consistent error responses.
+[on StackOverflow](http://stackoverflow.com/a/22751886/2217862)). This behaviour can be changed, **since
+Spring 4.0.0**, using `throwExceptionIfNoHandlerFound` init parameter. You should set this to true for a consistent
+error responses.
 
 
 **When using WebApplicationInitializer:**
@@ -253,6 +256,14 @@ Requirements
 *  Jackson 1.× and 2.× are both supported and optional.
 
 
+References
+----------
+
+*  [Improve Your Spring REST API by M. Severson](http://www.jayway.com/2012/09/23/improve-your-spring-rest-api-part-ii)
+*  [Spring MVC REST Exception Handling Best Practices by L. Hazlewood](https://stormpath.com/blog/spring-mvc-rest-exception-handling-best-practices-part-1/)
+*  [IETF draft Problem Details for HTTP APIs by M. Nottingham][http-problem]
+
+
 License
 -------
 
@@ -260,6 +271,7 @@ This project is licensed under [Apache License 2.0](http://www.apache.org/licens
 
 
 [http-problem]: http://tools.ietf.org/html/draft-nottingham-http-problem-06
+[ExceptionHandlerExceptionResolver]: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/ExceptionHandlerExceptionResolver.html
 [@ExceptionHandler]: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/bind/annotation/ExceptionHandler.html
 [DispatcherServlet]: http://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
 [MessageSource]: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/MessageSource.html
@@ -267,3 +279,4 @@ This project is licensed under [Apache License 2.0](http://www.apache.org/licens
 [HttpServletRequest]: http://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletRequest.html
 
 [messages.properties]: src/main/resources/cz/jirutka/spring/exhandler/messages.properties
+[RestHandlerExceptionResolver]: cz/jirutka/spring/exhandler/RestHandlerExceptionResolver.java
