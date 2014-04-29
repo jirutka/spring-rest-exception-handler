@@ -15,7 +15,6 @@
  */
 package cz.jirutka.spring.exhandler.handlers;
 
-import org.apache.commons.lang3.reflect.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -25,7 +24,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.TypeVariable;
+
+import static org.springframework.core.GenericTypeResolver.resolveTypeArguments;
 
 /**
  * The base implementation of the {@link RestExceptionHandler} interface.
@@ -118,7 +118,6 @@ public abstract class AbstractRestExceptionHandler<E extends Exception, T> imple
 
     @SuppressWarnings("unchecked")
     private Class<E> determineTargetType() {
-        TypeVariable<?> typeVar = AbstractRestExceptionHandler.class.getTypeParameters()[0];
-        return (Class<E>) TypeUtils.getRawType(typeVar, this.getClass());
+        return (Class<E>) resolveTypeArguments(getClass(), AbstractRestExceptionHandler.class)[0];
     }
 }
