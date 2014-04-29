@@ -4,8 +4,12 @@ Spring REST Exception handler
 [![Coverage Status](https://coveralls.io/repos/jirutka/spring-rest-exception-handler/badge.png?branch=master)](https://coveralls.io/r/jirutka/spring-rest-exception-handler?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.spring/spring-rest-exception-handler/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.spring/spring-rest-exception-handler)
 
-The aim of this project is to provide an opinionated yet flexible implementation of exception handling in Spring MVC
-that meets a best-practices for error representation in RESTful APIs.
+The aim of this project is to provide a convenient exception handler (resolver) for RESTful APIs that meets a
+best-practices for error responses without repeating yourself. It’s very easy to handle custom exceptions, customize
+error responses and even localize them. Also solves some pitfalls\* in Spring MVC with a content negotiation when
+producing error responses.
+
+\* _Nothing terrible, Spring MVC is still a far better then JAX-RS for RESTful APIs!  ;)_
 
 
 Error message
@@ -286,6 +290,7 @@ References
 
 *  [Improve Your Spring REST API by M. Severson](http://www.jayway.com/2012/09/23/improve-your-spring-rest-api-part-ii)
 *  [Spring MVC REST Exception Handling Best Practices by L. Hazlewood](https://stormpath.com/blog/spring-mvc-rest-exception-handling-best-practices-part-1/)
+*  [Exception Handling in Spring MVC by P. Chapman](http://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc)
 *  [IETF draft Problem Details for HTTP APIs by M. Nottingham][http-problem]
 
 
