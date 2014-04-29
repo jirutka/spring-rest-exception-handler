@@ -33,8 +33,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-
 /**
  * {@link RestExceptionHandler} that produces {@link ErrorMessage}.
  *
@@ -128,6 +126,6 @@ public class ErrorMessageRestExceptionHandler<E extends Exception>
     }
 
     public void setMessageInterpolator(MessageInterpolator interpolator) {
-        this.interpolator = defaultIfNull(interpolator, new NoOpMessageInterpolator());
+        this.interpolator = interpolator != null ? interpolator : new NoOpMessageInterpolator();
     }
 }

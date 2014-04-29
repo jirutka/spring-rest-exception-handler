@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 
 import static cz.jirutka.spring.exhandler.support.HttpMessageConverterUtils.getDefaultHttpMessageConverters;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 import static org.springframework.web.servlet.HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE;
 
@@ -145,6 +144,8 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
 
     //////// Accessors ////////
 
+    // Note: We're not using Lombok in this class to make it clear for debugging.
+
     public List<HttpMessageConverter<?>> getMessageConverters() {
         return messageConverters;
     }
@@ -159,7 +160,8 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
     }
 
     public void setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager) {
-        this.contentNegotiationManager = defaultIfNull(contentNegotiationManager, new ContentNegotiationManager());
+        this.contentNegotiationManager = contentNegotiationManager != null
+                ? contentNegotiationManager : new ContentNegotiationManager();
     }
 
     public MediaType getDefaultContentType() {
