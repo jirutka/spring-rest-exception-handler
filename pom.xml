@@ -7,7 +7,7 @@
     <parent>
         <groupId>cz.jirutka.maven</groupId>
         <artifactId>groovy-lombok-parent</artifactId>
-        <version>1.1.4</version>
+        <version>1.1.5</version>
     </parent>
 
 
@@ -205,47 +205,7 @@
     </dependencies>
 
 
-    <!--//////////////////// BUILD ////////////////////-->
-
-    <build>
-        <plugins>
-            <!--
-                Add integration tests sources to the build.
-            -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-it-sources</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/it/groovy</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>add-it-resources</id>
-                        <phase>generate-test-resources</phase>
-                        <goals>
-                            <goal>add-test-resource</goal>
-                        </goals>
-                        <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>src/it/resources</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <!--//////////////////// PROFILES ////////////////////-->
 
     <profiles>
         <profile>
