@@ -138,6 +138,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Required only when you wanna use ConstraintViolationExceptionHandler. -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
+            <optional>true</optional>
+        </dependency>
+
         <!--//// Test ////-->
 
         <dependency>
@@ -200,6 +208,21 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.1.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.0.3.Final</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Required by hibernate-validator -->
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>2.2.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -31,6 +31,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -41,6 +42,7 @@ import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -233,6 +235,10 @@ public class RestHandlerExceptionResolverBuilder {
         map.put( HttpRequestMethodNotSupportedException.class, new HttpRequestMethodNotSupportedExceptionHandler() );
         map.put( HttpMediaTypeNotSupportedException.class, new HttpMediaTypeNotSupportedExceptionHandler() );
         map.put( MethodArgumentNotValidException.class, new MethodArgumentNotValidExceptionHandler() );
+
+        if (ClassUtils.isPresent("javax.validation.ConstraintViolationException", getClass().getClassLoader())) {
+            map.put( ConstraintViolationException.class, new ConstraintViolationExceptionHandler() );
+        }
 
         addHandlerTo( map, HttpMediaTypeNotAcceptableException.class, NOT_ACCEPTABLE );
         addHandlerTo( map, MissingServletRequestParameterException.class, BAD_REQUEST );
