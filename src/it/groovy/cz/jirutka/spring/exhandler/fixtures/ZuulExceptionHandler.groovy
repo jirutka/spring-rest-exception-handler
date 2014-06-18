@@ -16,14 +16,16 @@
 package cz.jirutka.spring.exhandler.fixtures
 
 import cz.jirutka.spring.exhandler.handlers.RestExceptionHandler
+import cz.jirutka.spring.exhandler.messages.ErrorMessage
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
 import javax.servlet.http.HttpServletRequest
 
-class ZuulExceptionHandler implements RestExceptionHandler<ZuulException, Integer> {
+class ZuulExceptionHandler implements RestExceptionHandler<ZuulException, ErrorMessage> {
 
-    ResponseEntity<String> handleException(ZuulException exception, HttpServletRequest request) {
-        new ResponseEntity<String>("There's no Dana, only Zuul!", HttpStatus.NOT_FOUND)
+    ResponseEntity<ErrorMessage> handleException(ZuulException exception, HttpServletRequest request) {
+        def body = new ErrorMessage(title: "There's no Dana, only Zuul!")
+        new ResponseEntity<>(body, HttpStatus.NOT_FOUND)
     }
 }

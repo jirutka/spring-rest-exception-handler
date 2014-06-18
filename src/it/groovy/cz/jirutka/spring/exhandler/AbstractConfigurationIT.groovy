@@ -94,10 +94,16 @@ abstract class AbstractConfigurationIT extends Specification {
 
     def 'Perform request that causes user-defined exception with custom exception handler'() {
         when:
-            perform GET('/dana')
+            perform GET('/dana').with {
+                accept APPLICATION_JSON
+            }
         then:
-            response.status == 404
-            response.contentAsString == "There's no Dana, only Zuul!"
+            response.status      == 404
+            response.contentType == JSON_UTF8
+        and:
+            with (response.contentAsJson) {
+                title == "There's no Dana, only Zuul!"
+            }
     }
 
     def 'Perform request that causes built-in exception handled by default handler remapped to different status'() {
