@@ -71,11 +71,14 @@
     <!--//////////////////// DEPENDENCIES ////////////////////-->
 
     <dependencies>
+        <!--
+            This dependency is needed, even when Jackson 2 is not used,
+            but it contains just few annotations, nothing more.
+         -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>${jackson2.version}</version>
-            <optional>true</optional>
         </dependency>
 
         <dependency>
