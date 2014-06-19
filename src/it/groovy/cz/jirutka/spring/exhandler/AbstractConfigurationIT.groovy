@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import spock.lang.Issue
 import spock.lang.Specification
 
 import static org.springframework.http.MediaType.APPLICATION_XML
@@ -122,6 +123,20 @@ abstract class AbstractConfigurationIT extends Specification {
             response.contentAsXml.title == "There's no Dana, only Zuul!"
     }
 
+    @Issue('#2')
+    def 'Perform request without Accept that causes handled exception'() {
+
+        when: "perform request on resource that throws ZuulException and don't specify Accept"
+            perform GET('/dana')
+
+        then: 'we get error response with the status specified in ZuulExceptionHandler'
+            response.status == 404
+
+        and: 'Content-Type corresponds to the configured defaultContentType'
+            response.contentType == JSON_UTF8
+            response.contentAsJson.title == "There's no Dana, only Zuul!"
+    }
+
     def 'Perform request with Accept that is not supported by resource and exception handler'() {
         when:
             perform GET('/ping').with {
@@ -142,7 +157,8 @@ abstract class AbstractConfigurationIT extends Specification {
         then: 'we got 418 instead of 405 that is default for this error'
             response.status == 418
         and:
-            response.contentAsXml.title == 'Method Not Allowed'
+            response.contentType == JSON_UTF8
+            response.contentAsJson.title == 'Method Not Allowed'
     }
 
     def 'Perform request that causes user-defined exception handled by @ExceptionHandler method'() {

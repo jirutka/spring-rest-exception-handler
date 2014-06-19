@@ -26,6 +26,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.accept.FixedContentNegotiationStrategy;
+import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
@@ -59,11 +60,11 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
 
     private List<HttpMessageConverter<?>> messageConverters = getDefaultHttpMessageConverters();
 
-    private ContentNegotiationManager contentNegotiationManager = new ContentNegotiationManager();
-
     private Map<Class<? extends Exception>, RestExceptionHandler> handlers = new LinkedHashMap<>();
 
     private MediaType defaultContentType = APPLICATION_XML;
+
+    private ContentNegotiationManager contentNegotiationManager;
 
     // package visibility for tests
     HandlerMethodReturnValueHandler responseProcessor;
@@ -82,6 +83,10 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
 
     @Override
     public void afterPropertiesSet() {
+        if (contentNegotiationManager == null) {
+            contentNegotiationManager = new ContentNegotiationManager(
+                    new HeaderContentNegotiationStrategy(), new FixedContentNegotiationStrategy(defaultContentType));
+        }
         responseProcessor = new HttpEntityMethodProcessor(messageConverters, contentNegotiationManager);
         fallbackResponseProcessor = new HttpEntityMethodProcessor(messageConverters,
                 new ContentNegotiationManager(new FixedContentNegotiationStrategy(defaultContentType)));

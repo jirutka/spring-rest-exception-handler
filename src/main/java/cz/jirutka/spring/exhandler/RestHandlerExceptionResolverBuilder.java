@@ -65,10 +65,11 @@ public class RestHandlerExceptionResolverBuilder {
     private MediaType defaultContentType;
 
     /**
-     * The {@link ContentNegotiationManager} to use to determine requested media types.
-     * If not provided, the default instance of {@code ContentNegotiationManager} with the
+     * The {@link ContentNegotiationManager} to use to resolve acceptable media types.
+     * If not provided, the default instance of {@code ContentNegotiationManager} with
      * {@link org.springframework.web.accept.HeaderContentNegotiationStrategy HeaderContentNegotiationStrategy}
-     * will be used.
+     * and {@link org.springframework.web.accept.FixedContentNegotiationStrategy FixedContentNegotiationStrategy}
+     * (with {@link #defaultContentType(MediaType) defaultContentType}) will be used.
      */
     private ContentNegotiationManager contentNegotiationManager;
 
