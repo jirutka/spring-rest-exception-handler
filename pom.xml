@@ -15,7 +15,7 @@
 
     <groupId>cz.jirutka.spring</groupId>
     <artifactId>spring-rest-exception-handler</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>Spring REST Exception Handler</name>
@@ -63,7 +63,8 @@
     <properties>
         <!-- Recommended version is 4.0.0 or newer -->
         <spring.version>[3.2.0.RELEASE,)</spring.version>
-        <jackson.version>2.3.2</jackson.version>
+        <jackson1.version>1.9.13</jackson1.version>
+        <jackson2.version>2.3.2</jackson2.version>
     </properties>
 
 
@@ -73,7 +74,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
+            <version>${jackson2.version}</version>
             <optional>true</optional>
         </dependency>
 
@@ -193,7 +194,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
+            <version>${jackson2.version}</version>
             <scope>test</scope>
         </dependency>
 
