@@ -112,7 +112,7 @@ public class ErrorMessageRestExceptionHandler<E extends Exception>
         }
         if (message == null) {
             message = "";
-            LOG.warn("No message found for {}.{}, nor {}.{}", prefix, key, DEFAULT_PREFIX, key);
+            LOG.info("No message found for {}.{}, nor {}.{}", prefix, key, DEFAULT_PREFIX, key);
         }
         return message;
     }
