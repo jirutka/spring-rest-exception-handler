@@ -1,8 +1,15 @@
 language: java
+sudo: false
 jdk:
   - openjdk7
   - oraclejdk8
+env:
+  - SPRING_VERSION=3.2.13.RELEASE
+  - SPRING_VERSION=4.0.9.RELEASE
+  - SPRING_VERSION=4.1.4.RELEASE
+install:
+  - "mvn install -Dspring.version=$SPRING_VERSION -DskipTests=true -Dmaven.javadoc.skip=true -B -V"
 script:
-  - 'mvn verify'
+  - "mvn verify -Dspring.version=$SPRING_VERSION -B"
 after_success:
   - 'mvn jacoco:report coveralls:jacoco'
