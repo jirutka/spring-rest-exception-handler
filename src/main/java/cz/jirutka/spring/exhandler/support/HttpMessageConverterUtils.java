@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2014-2015 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.util.ClassUtils;
 
@@ -58,6 +57,7 @@ public abstract class HttpMessageConverterUtils {
      * {@link org.codehaus.jackson.JsonGenerator} or one of its dependencies is not present or
      * cannot be loaded.
      */
+    @Deprecated
     public static boolean isJacksonPresent() {
         return ClassUtils.isPresent("org.codehaus.jackson.map.ObjectMapper", CLASSLOADER) &&
                 ClassUtils.isPresent("org.codehaus.jackson.JsonGenerator", CLASSLOADER);
@@ -72,7 +72,8 @@ public abstract class HttpMessageConverterUtils {
      *     <li>{@linkplain ResourceHttpMessageConverter}</li>
      *     <li>{@linkplain Jaxb2RootElementHttpMessageConverter} (when JAXB is present)</li>
      *     <li>{@linkplain MappingJackson2HttpMessageConverter} (when Jackson 2.x is present)</li>
-     *     <li>{@linkplain MappingJacksonHttpMessageConverter} (when Jackson 1.x is present and 2.x not)</li>
+     *     <li>{@linkplain org.springframework.http.converter.json.MappingJacksonHttpMessageConverter}
+     *         (when Jackson 1.x is present and 2.x not)</li>
      * </ul>
      *
      * <p>Note: It does not return all of the default converters defined in Spring, but just thus
@@ -97,7 +98,15 @@ public abstract class HttpMessageConverterUtils {
             converters.add(new MappingJackson2HttpMessageConverter());
 
         } else if (isJacksonPresent()) {
-            converters.add(new MappingJacksonHttpMessageConverter());
+            try {
+                Class<?> clazz = Class.forName("org.springframework.http.converter.json.MappingJacksonHttpMessageConverter");
+                converters.add((HttpMessageConverter<?>) clazz.newInstance());
+
+            } catch (ClassNotFoundException ex) {
+                // Ignore it, this class is not available since Spring 4.1.0.
+            } catch (InstantiationException | IllegalAccessException ex) {
+                throw new IllegalStateException(ex);
+            }
         }
         return converters;
     }
