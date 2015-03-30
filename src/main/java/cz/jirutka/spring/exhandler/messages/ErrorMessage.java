@@ -17,6 +17,7 @@ package cz.jirutka.spring.exhandler.messages;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -84,6 +85,7 @@ public class ErrorMessage implements Serializable {
     }
 
 
+    @JsonProperty
     public void setStatus(Integer status) {
         this.status = status;
     }
