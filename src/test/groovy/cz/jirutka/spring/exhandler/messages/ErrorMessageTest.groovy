@@ -43,4 +43,24 @@ class ErrorMessageTest extends Specification {
                 ! instance
             }
     }
+
+    def 'convert from JSON using Jackson2'() {
+        given:
+        def json = """{
+                "type": "http://httpstatus.es/500",
+                "title": "Title",
+                "status": 500,
+                "detail": "Detail",
+                "instance": "http://httpstatus.es/500"}"""
+        when:
+        def result = jackson.readValue(json, ErrorMessage.class)
+        then:
+        with (jsonParser.parseText(json)) {
+            type == result.type.toString()
+            title == result.title
+            status == result.status
+            detail == result.detail
+            instance == result.instance.toString()
+        }
+    }
 }
