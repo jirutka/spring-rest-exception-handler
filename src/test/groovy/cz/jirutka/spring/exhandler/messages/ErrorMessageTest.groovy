@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2014-2015 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,24 @@ class ErrorMessageTest extends Specification {
                 status == object.status
                 ! detail
                 ! instance
+            }
+    }
+
+    def 'convert from JSON using Jackson2'() {
+        given:
+            def json = '''
+                {
+                    "type": "http://httpstatus.es/500",
+                    "title": "Internal Server Error",
+                    "status": 500,
+                    "detail": "Some detail",
+                    "instance": "http://example.org/exceptions/123456"
+                }'''
+        when:
+            def result = jackson.readValue(json, ErrorMessage)
+        then:
+            jsonParser.parseText(json).each { attr, val ->
+                assert result[attr].toString() == val.toString()
             }
     }
 }
