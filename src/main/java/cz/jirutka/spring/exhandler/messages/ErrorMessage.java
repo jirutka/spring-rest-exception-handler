@@ -15,7 +15,6 @@
  */
 package cz.jirutka.spring.exhandler.messages;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -91,7 +90,6 @@ public class ErrorMessage implements Serializable {
         this.status = status;
     }
 
-    @JsonIgnore
     public void setStatus(HttpStatus status) {
         this.status = status.value();
     }
