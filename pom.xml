@@ -15,7 +15,7 @@
 
     <groupId>cz.jirutka.spring</groupId>
     <artifactId>spring-rest-exception-handler</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.2-json</version>
     <packaging>jar</packaging>
 
     <name>Spring REST Exception Handler</name>
