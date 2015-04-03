@@ -7,9 +7,6 @@ env:
   - SPRING_VERSION=3.2.13.RELEASE
   - SPRING_VERSION=4.0.9.RELEASE
   - SPRING_VERSION=4.1.4.RELEASE
-cache:
-  directories:
-    - $HOME/.m2
 install:
   - mvn dependency:go-offline -Dspring.version=$SPRING_VERSION --threads 5 -B -V
 script:
