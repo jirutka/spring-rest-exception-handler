@@ -34,6 +34,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 @NoArgsConstructor
 @ToString(callSuper=true)
 @EqualsAndHashCode(callSuper=true)
+@ToString(callSuper = true)
 @JsonInclude(Include.NON_EMPTY) //for Jackson 2.x
 @JsonSerialize(include=Inclusion.NON_EMPTY) //for Jackson 1.x
 @XmlRootElement(name="problem") //for JAXB
