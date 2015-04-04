@@ -31,9 +31,9 @@ import java.util.List;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 @Data
-@ToString(callSuper = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=true)
+@ToString(callSuper = true)
 @JsonInclude(Include.NON_EMPTY) //for Jackson 2.x
 @JsonSerialize(include= Inclusion.NON_EMPTY) //for Jackson 1.x
 @XmlRootElement(name="problem") //for JAXB
