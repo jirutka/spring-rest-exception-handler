@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
@@ -31,9 +32,10 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 @Data
 @NoArgsConstructor
+@ToString(callSuper=true)
 @EqualsAndHashCode(callSuper=true)
 @JsonInclude(Include.NON_EMPTY) //for Jackson 2.x
-@JsonSerialize(include= Inclusion.NON_EMPTY) //for Jackson 1.x
+@JsonSerialize(include=Inclusion.NON_EMPTY) //for Jackson 1.x
 @XmlRootElement(name="problem") //for JAXB
 public class ValidationErrorMessage extends ErrorMessage {
 
