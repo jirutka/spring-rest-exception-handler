@@ -19,6 +19,7 @@ import cz.jirutka.spring.exhandler.interpolators.MessageInterpolator
 import cz.jirutka.spring.exhandler.messages.ErrorMessage
 import org.springframework.beans.TypeMismatchException
 import org.springframework.context.MessageSource
+import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Shared
 import spock.lang.Specification
@@ -68,7 +69,7 @@ class ErrorMessageRestExceptionHandlerTest extends Specification {
             def ex = new TypeMismatchException(1, String)
             def msgTemplate = 'Type mismatch on value: #{value}'
             def msg = 'Type mismatch on value: 1'
-            request.setPreferredLocales([JAPANESE])
+            LocaleContextHolder.locale = JAPANESE
         when:
             def result = handler.resolveMessage('detail', ex, request)
         then:

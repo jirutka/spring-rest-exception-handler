@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 
@@ -87,7 +88,7 @@ public class ErrorMessageRestExceptionHandler<E extends Exception>
 
     protected String resolveMessage(String key, E exception, HttpServletRequest request) {
 
-        String template = getMessage(key, request.getLocale());
+        String template = getMessage(key, LocaleContextHolder.getLocale());
 
         Map<String, Object> vars = new HashMap<>(2);
         vars.put("ex", exception);
