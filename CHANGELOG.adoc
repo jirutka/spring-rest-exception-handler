@@ -2,6 +2,11 @@
 :repo-uri: https://github.com/jirutka/spring-rest-exception-handler
 :issue-uri: {repo-uri}/issues
 
+== 1.1.0 (2015-06-25)
+
+* Include fields from `ErrorMessage` in `ValidationErrorMessage#toString()`.
+* Get locale from `LocaleContextHolder` instead of `HttpServletRequest` (thanks to @lukasz-kusek). [{issue-uri}/7[#7]]
+
 == 1.0.3 (2015-03-31)
 
 * Fix error when deserializing `ErrorMessage` from JSON using Jackson 2 due to multiple setters for the status property (thanks to @lukasniemeier-zalando). [{issue-uri}/6[#6]]
