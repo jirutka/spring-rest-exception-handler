@@ -57,6 +57,13 @@
         <url>https://travis-ci.org/jirutka/spring-rest-exception-handler/</url>
     </ciManagement>
 
+    <distributionManagement>
+        <repository>
+            <id>bintray-jirutka</id>
+            <url>https://api.bintray.com/maven/jirutka/maven/${project.artifactId}</url>
+        </repository>
+    </distributionManagement>
+
 
     <!--//////////////////// PROPERTIES ////////////////////-->
 
