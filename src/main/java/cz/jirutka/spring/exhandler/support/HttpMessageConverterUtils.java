@@ -42,8 +42,8 @@ public abstract class HttpMessageConverterUtils {
 
     /**
      * Determine whether Jackson 2.x is present on the classpath and can be loaded. Will return
-     * <tt>false</tt> if either the {@link com.fasterxml.jackson.databind.ObjectMapper},
-     * {@link com.fasterxml.jackson.core.JsonGenerator} or one of its dependencies is not present
+     * <tt>false</tt> if either the {@code com.fasterxml.jackson.databind.ObjectMapper},
+     * {@code com.fasterxml.jackson.core.JsonGenerator} or one of its dependencies is not present
      * or cannot be loaded.
      */
     public static boolean isJackson2Present() {
@@ -53,8 +53,8 @@ public abstract class HttpMessageConverterUtils {
 
     /**
      * Determine whether Jackson 1.x is present on the classpath and can be loaded. Will return
-     * <tt>false</tt> if either the {@link org.codehaus.jackson.map.ObjectMapper},
-     * {@link org.codehaus.jackson.JsonGenerator} or one of its dependencies is not present or
+     * <tt>false</tt> if either the {@code org.codehaus.jackson.map.ObjectMapper},
+     * {@code org.codehaus.jackson.JsonGenerator} or one of its dependencies is not present or
      * cannot be loaded.
      */
     @Deprecated
