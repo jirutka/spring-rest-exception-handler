@@ -2,6 +2,10 @@
 :repo-uri: https://github.com/jirutka/spring-rest-exception-handler
 :issue-uri: {repo-uri}/issues
 
+== 1.1.1 (2015-07-27)
+
+* Adds compatibility with Spring MVC 4.2.0.
+
 == 1.1.0 (2015-06-25)
 
 * Include fields from `ErrorMessage` in `ValidationErrorMessage#toString()`.
