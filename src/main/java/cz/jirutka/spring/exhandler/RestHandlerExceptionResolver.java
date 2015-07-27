@@ -19,6 +19,7 @@ import cz.jirutka.spring.exhandler.handlers.RestExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -29,6 +30,7 @@ import org.springframework.web.accept.FixedContentNegotiationStrategy;
 import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.ModelAndView;
@@ -104,7 +106,7 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
             return null;
         }
         try {
-            processResponse(entity, new ServletWebRequest(request, response));
+            processResponse(entity, new ServletWebRequest(request, response), handler);
         } catch (Exception ex) {
             LOG.error("Failed to process error response: {}", entity, ex);
             return null;
@@ -134,15 +136,19 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
         throw new NoExceptionHandlerFoundException();
     }
 
-    protected void processResponse(ResponseEntity<?> entity, NativeWebRequest webRequest) throws Exception {
+    protected void processResponse(ResponseEntity<?> entity, NativeWebRequest webRequest, Object handler) throws Exception {
 
         ModelAndViewContainer mavContainer = new ModelAndViewContainer();
+        MethodParameter returnType = null;
+        if (handler instanceof HandlerMethod) {
+            returnType = ((HandlerMethod) handler).getReturnType();
+        }
         try {
-            responseProcessor.handleReturnValue(entity, null, mavContainer, webRequest);
+            responseProcessor.handleReturnValue(entity, returnType, mavContainer, webRequest);
 
         } catch (HttpMediaTypeNotAcceptableException ex) {
             LOG.debug("Requested media type is not supported, falling back to default one");
-            fallbackResponseProcessor.handleReturnValue(entity, null, mavContainer, webRequest);
+            fallbackResponseProcessor.handleReturnValue(entity, returnType, mavContainer, webRequest);
         }
     }
 
