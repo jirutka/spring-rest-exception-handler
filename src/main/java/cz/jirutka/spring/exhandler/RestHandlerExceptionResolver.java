@@ -140,7 +140,7 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
 
         ModelAndViewContainer mavContainer = new ModelAndViewContainer();
         MethodParameter returnType = null;
-        if (handler instanceof HandlerMethod) {
+        if (handler != null && handler instanceof HandlerMethod) {
             returnType = ((HandlerMethod) handler).getReturnType();
         }
         try {
