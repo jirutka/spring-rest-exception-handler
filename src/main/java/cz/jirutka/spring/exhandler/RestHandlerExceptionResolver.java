@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2014-2015 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ import cz.jirutka.spring.exhandler.handlers.RestExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.accept.FixedContentNegotiationStrategy;
@@ -37,6 +39,7 @@ import org.springframework.web.servlet.mvc.method.annotation.HttpEntityMethodPro
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +61,8 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
 
     private static final Logger LOG = LoggerFactory.getLogger(RestHandlerExceptionResolver.class);
 
+    private final MethodParameter returnTypeMethodParam;
+
     private List<HttpMessageConverter<?>> messageConverters = getDefaultHttpMessageConverters();
 
     private Map<Class<? extends Exception>, RestExceptionHandler> handlers = new LinkedHashMap<>();
@@ -78,6 +83,18 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
      */
     public static RestHandlerExceptionResolverBuilder builder() {
         return new RestHandlerExceptionResolverBuilder();
+    }
+
+
+    public RestHandlerExceptionResolver() {
+
+        Method method = ClassUtils.getMethod(
+            RestExceptionHandler.class, "handleException", Exception.class, HttpServletRequest.class);
+
+        returnTypeMethodParam = new MethodParameter(method, -1);
+        // This method caches the resolved value, so it's convenient to initialize it
+        // only once here.
+        returnTypeMethodParam.getGenericParameterType();
     }
 
 
@@ -136,13 +153,16 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
 
     protected void processResponse(ResponseEntity<?> entity, NativeWebRequest webRequest) throws Exception {
 
+        // XXX: Create MethodParameter from the actually used subclass of RestExceptionHandler?
+        MethodParameter methodParameter = new MethodParameter(returnTypeMethodParam);
         ModelAndViewContainer mavContainer = new ModelAndViewContainer();
+
         try {
-            responseProcessor.handleReturnValue(entity, null, mavContainer, webRequest);
+            responseProcessor.handleReturnValue(entity, methodParameter, mavContainer, webRequest);
 
         } catch (HttpMediaTypeNotAcceptableException ex) {
             LOG.debug("Requested media type is not supported, falling back to default one");
-            fallbackResponseProcessor.handleReturnValue(entity, null, mavContainer, webRequest);
+            fallbackResponseProcessor.handleReturnValue(entity, methodParameter, mavContainer, webRequest);
         }
     }
 
