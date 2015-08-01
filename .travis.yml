@@ -4,9 +4,10 @@ jdk:
   - openjdk7
   - oraclejdk8
 env:
-  - SPRING_VERSION=3.2.13.RELEASE
+  - SPRING_VERSION=3.2.14.RELEASE
   - SPRING_VERSION=4.0.9.RELEASE
-  - SPRING_VERSION=4.1.6.RELEASE
+  - SPRING_VERSION=4.1.7.RELEASE
+  - SPRING_VERSION=4.2.0.RELEASE
 install:
   - mvn dependency:go-offline -Dspring.version=$SPRING_VERSION --threads 5 -B -V
 script:
