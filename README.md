@@ -1,6 +1,6 @@
 Spring REST Exception handler
 =============================
-[![Build Status](https://travis-ci.org/jirutka/spring-rest-exception-handler.svg)](https://travis-ci.org/jirutka/spring-rest-exception-handler)
+[![Build Status](https://travis-ci.org/jirutka/spring-rest-exception-handler.svg?branch=master)](https://travis-ci.org/jirutka/spring-rest-exception-handler)
 [![Coverage Status](https://img.shields.io/coveralls/jirutka/spring-rest-exception-handler/master.svg?style=flat)](https://coveralls.io/r/jirutka/spring-rest-exception-handler?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.spring/spring-rest-exception-handler/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.spring/spring-rest-exception-handler)
 
