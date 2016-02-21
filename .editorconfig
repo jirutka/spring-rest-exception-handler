@@ -11,3 +11,6 @@ trim_trailing_whitespace = true
 
 [*.{adoc,yml}]
 indent_size = 2
+
+[script/*]
+indent_style = tab

@@ -4,10 +4,13 @@ jdk:
   - openjdk7
   - oraclejdk8
 env:
-  - SPRING_VERSION=3.2.16.RELEASE
-  - SPRING_VERSION=4.0.9.RELEASE
-  - SPRING_VERSION=4.1.9.RELEASE
-  - SPRING_VERSION=4.2.4.RELEASE
+  global:
+    secure: "DiliRHV1VROi28XVoFVupupLMVJ0IqyuJsBR2NyfjhAB4eOvwyRY78H2iNzZ5TPkgQ2x5roCE9vDF4WRlRGd/rTgs2YvRjCL2tOpjxYXgyjuFKq0HtnG6Jpr45LV7dmTxiAUXjiNUa9SSr30CXAOEM2dcPYjci3Ze7HV/5BtkSU="  # BINTRAY_API_KEY
+  matrix:
+    - SPRING_VERSION=3.2.16.RELEASE
+    - SPRING_VERSION=4.0.9.RELEASE
+    - SPRING_VERSION=4.1.9.RELEASE
+    - SPRING_VERSION=4.2.4.RELEASE
 
 # Cache local Maven repository.
 cache:
@@ -22,3 +25,4 @@ script:
   - mvn verify -Dspring.version=$SPRING_VERSION --batch-mode
 after_success:
   - mvn jacoco:report coveralls:report
+  - script/travis-deploy
