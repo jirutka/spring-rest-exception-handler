@@ -257,11 +257,12 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
 ----
 
 
-== Maven
+== How to get it?
 
-Released versions are available in The Central Repository.
+Released versions are available in jCenter and the Central Repository.
 Just add this artifact to your project:
 
+._Maven_
 [source, xml, subs="verbatim, attributes"]
 ----
 <dependency>
@@ -271,8 +272,13 @@ Just add this artifact to your project:
 </dependency>
 ----
 
+._Gradle_
+[source, groovy, subs="verbatim, attributes"]
+compile '{group-id}:{artifact-id}:{version}'
+
 However if you want to use the last snapshot version, you have to add the JFrog OSS repository:
 
+._Maven_
 [source, xml]
 ----
 <repository>
@@ -283,6 +289,16 @@ However if you want to use the last snapshot version, you have to add the JFrog 
         <enabled>true</enabled>
     </snapshots>
 </repository>
+----
+
+._Gradle_
+[source, groovy]
+----
+repositories {
+  maven {
+    url 'https://oss.jfrog.org/oss-snapshot-local'
+  }
+}
 ----
 
 
