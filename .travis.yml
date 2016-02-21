@@ -1,5 +1,5 @@
-language: java
 sudo: false
+language: java
 jdk:
   - openjdk7
   - oraclejdk8
@@ -8,9 +8,17 @@ env:
   - SPRING_VERSION=4.0.9.RELEASE
   - SPRING_VERSION=4.1.7.RELEASE
   - SPRING_VERSION=4.2.0.RELEASE
+
+# Cache local Maven repository.
+cache:
+  directories:
+    - $HOME/.m2
+before_cache:
+  - rm -Rf $HOME/.m2/repository/cz/jirutka/spring/spring-rest-exception-handler
+
 install:
-  - mvn dependency:go-offline -Dspring.version=$SPRING_VERSION --threads 5 -B -V
+  - mvn install -Dspring.version=$SPRING_VERSION -DskipTests=true --batch-mode
 script:
-  - "mvn verify -Dspring.version=$SPRING_VERSION -B"
+  - mvn verify -Dspring.version=$SPRING_VERSION --batch-mode
 after_success:
   - 'mvn jacoco:report coveralls:jacoco'
