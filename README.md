@@ -2,6 +2,7 @@ Spring REST Exception handler
 =============================
 [![Build Status](https://travis-ci.org/jirutka/spring-rest-exception-handler.svg?branch=master)](https://travis-ci.org/jirutka/spring-rest-exception-handler)
 [![Coverage Status](https://img.shields.io/coveralls/jirutka/spring-rest-exception-handler/master.svg?style=flat)](https://coveralls.io/r/jirutka/spring-rest-exception-handler?branch=master)
+[![Code quality](https://api.codacy.com/project/badge/grade/ca5dbac87d564725b6640a67b2b7ea35)](https://www.codacy.com/app/jirutka/spring-rest-exception-handler)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.spring/spring-rest-exception-handler/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.spring/spring-rest-exception-handler)
 
 The aim of this project is to provide a convenient exception handler (resolver) for RESTful APIs that meets a
