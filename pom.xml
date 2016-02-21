@@ -7,7 +7,7 @@
     <parent>
         <groupId>cz.jirutka.maven</groupId>
         <artifactId>groovy-lombok-parent</artifactId>
-        <version>1.1.10</version>
+        <version>1.2.0</version>
     </parent>
 
 
@@ -56,13 +56,6 @@
         <system>travis</system>
         <url>https://travis-ci.org/jirutka/spring-rest-exception-handler/</url>
     </ciManagement>
-
-    <distributionManagement>
-        <repository>
-            <id>bintray-jirutka</id>
-            <url>https://api.bintray.com/maven/jirutka/maven/${project.artifactId}</url>
-        </repository>
-    </distributionManagement>
 
 
     <!--//////////////////// PROPERTIES ////////////////////-->
@@ -196,7 +189,7 @@
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
-            <version>3.1</version>
+            <version>3.2.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -224,7 +217,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.1</version>
+            <version>1.1.5</version>
             <scope>test</scope>
         </dependency>
 
