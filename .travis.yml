@@ -21,4 +21,4 @@ install:
 script:
   - mvn verify -Dspring.version=$SPRING_VERSION --batch-mode
 after_success:
-  - 'mvn jacoco:report coveralls:jacoco'
+  - mvn jacoco:report coveralls:report
