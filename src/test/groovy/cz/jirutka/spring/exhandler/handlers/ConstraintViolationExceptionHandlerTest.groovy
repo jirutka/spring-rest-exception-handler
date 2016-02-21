@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2014-2016 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,9 +50,12 @@ class ConstraintViolationExceptionHandlerTest extends Specification {
                     .addError('text', null, 'not empty')
         and:
             def violation1 = ConstraintViolationImpl.forBeanValidation(
-                    'less than {value}', 'less than 10', bean.class, bean, bean, 42, propertyPath('number'), null, FIELD)
+                    'less than {value}', [:], 'less than 10', bean.class,
+                    bean, bean, 42, propertyPath('number'), null, FIELD)
+
             def violation2 = ConstraintViolationImpl.forBeanValidation(
-                    'not empty', 'not empty', bean.class, bean, bean, null, propertyPath('text'), null, FIELD)
+                    'not empty', [:], 'not empty', bean.class, bean, bean,
+                    null, propertyPath('text'), null, FIELD)
         expect:
             assertError([violation1, violation2], errorMessage)
     }
@@ -64,7 +67,7 @@ class ConstraintViolationExceptionHandlerTest extends Specification {
         and:
             def path = new PathBuilder().addPropertyNode('list', 2).addBeanNode().build()
             def violation = ConstraintViolationImpl.forBeanValidation(
-                    'message', 'message', bean.class, bean, bean, ['foo'], path, null, FIELD)
+                    'message', [:], 'message', bean.class, bean, bean, ['foo'], path, null, FIELD)
         expect:
             assertError violation, errorMessage
     }
@@ -76,7 +79,7 @@ class ConstraintViolationExceptionHandlerTest extends Specification {
         and:
             def path = new PathBuilder().build()
             def violation = ConstraintViolationImpl.forBeanValidation(
-                    'bean invalid', 'bean invalid', bean.class, bean, bean, bean, path, null, TYPE)
+                    'bean invalid', [:], 'bean invalid', bean.class, bean, bean, bean, path, null, TYPE)
         expect:
             assertError violation, errorMessage
     }
@@ -92,7 +95,7 @@ class ConstraintViolationExceptionHandlerTest extends Specification {
                     .addPropertyNode('text')
                     .build()
             def violation = ConstraintViolationImpl.forBeanValidation(
-                    'not null', 'not null', service.class, service, bean, null, path, null, FIELD)
+                    'not null', [:], 'not null', service.class, service, bean, null, path, null, FIELD)
         expect:
             assertError violation, errorMessage
     }
@@ -121,7 +124,9 @@ class ConstraintViolationExceptionHandlerTest extends Specification {
         when:
             def body = handler.createBody(exception, request) as ValidationErrorMessage
         then:
-            1 * conversionService.convert(invalidValue, String) >> { throw new ConverterNotFoundException(null, null) }
+            1 * conversionService.convert(invalidValue, String) >> {
+                throw new ConverterNotFoundException(null, null)
+            }
         and:
             body.errors[0].rejected == 'dummy'
     }
@@ -132,7 +137,7 @@ class ConstraintViolationExceptionHandlerTest extends Specification {
         assertError([violation], expected)
     }
 
-    void assertError(Collection<ConstraintViolation> violations, ValidationErrorMessage expected) {
+    void assertError(Collection<? extends ConstraintViolation> violations, ValidationErrorMessage expected) {
         def exception = new ConstraintViolationException(violations as Set)
         def actual = handler.createBody(exception, request) as ValidationErrorMessage
 
@@ -141,7 +146,7 @@ class ConstraintViolationExceptionHandlerTest extends Specification {
 
     def buildSimpleViolationException(invalidValue) {
         def violation = ConstraintViolationImpl.forBeanValidation(
-                'foo', 'bar', bean.class, bean, bean, invalidValue, propertyPath('text'), null, FIELD)
+                'foo', [:], 'bar', bean.class, bean, bean, invalidValue, propertyPath('text'), null, FIELD)
 
         new ConstraintViolationException([violation] as Set)
     }
@@ -171,7 +176,7 @@ class ConstraintViolationExceptionHandlerTest extends Specification {
         }
 
         def addMethodNode(String name, List<Class> types) {
-            nodes << createMethodNode(name, nodes.last(), types)
+            nodes << createMethodNode(name, nodes.last(), types as Class[])
             this
         }
 
