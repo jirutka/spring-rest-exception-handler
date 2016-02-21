@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2014-2016 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package cz.jirutka.spring.exhandler.messages;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -34,7 +33,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 @NoArgsConstructor
 @ToString(callSuper=true)
 @EqualsAndHashCode(callSuper=true)
-@JsonInclude(Include.NON_EMPTY) //for Jackson 2.x
+@JsonInclude(NON_EMPTY) //for Jackson 2.x
 @JsonSerialize(include=Inclusion.NON_EMPTY) //for Jackson 1.x
 @XmlRootElement(name="problem") //for JAXB
 public class ValidationErrorMessage extends ErrorMessage {
