@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2014-2016 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ public class ErrorMessageRestExceptionHandler<E extends Exception>
         }
         if (message == null) {
             message = "";
-            LOG.info("No message found for {}.{}, nor {}.{}", prefix, key, DEFAULT_PREFIX, key);
+            LOG.debug("No message found for {}.{}, nor {}.{}", prefix, key, DEFAULT_PREFIX, key);
         }
         return message;
     }
