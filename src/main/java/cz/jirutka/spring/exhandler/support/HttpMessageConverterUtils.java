@@ -29,6 +29,8 @@ import java.util.List;
 
 public abstract class HttpMessageConverterUtils {
 
+    private HttpMessageConverterUtils() {}
+
     private static final ClassLoader CLASSLOADER = HttpMessageConverterUtils.class.getClassLoader();
 
     /**

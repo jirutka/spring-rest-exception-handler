@@ -19,6 +19,8 @@ import java.util.Map;
 
 abstract class MapUtils {
 
+    private MapUtils() {}
+
     /**
      * Puts entries from the {@code source} map into the {@code target} map, but without overriding
      * any existing entry in {@code target} map, i.e. put only if the key does not exist in the
