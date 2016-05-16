@@ -2,7 +2,7 @@
 :source-language: java
 // Project meta
 :name: spring-rest-exception-handler
-:version: 1.1.1
+:version: 1.2.0
 :group-id: cz.jirutka.spring
 :artifact-id: {name}
 :gh-name: jirutka/{name}

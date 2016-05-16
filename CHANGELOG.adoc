@@ -2,6 +2,12 @@
 :repo-uri: https://github.com/jirutka/spring-rest-exception-handler
 :issue-uri: {repo-uri}/issues
 
+== 1.2.0 (2015-05-16)
+
+* Modify `ErrorMessageRestExceptionHandler` to log missing message on the DEBUG level instead of INFO.
+* Inherit versions of dependencies from Spring’s platform-bom.
+* Deploy snapshots to JFrog OSS repository.
+
 == 1.1.1 (2015-08-02)
 
 * Fix compatibility with Spring 4.2.0.
