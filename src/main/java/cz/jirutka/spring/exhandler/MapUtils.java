@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2014-2016 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@ package cz.jirutka.spring.exhandler;
 
 import java.util.Map;
 
-abstract class MapUtils {
+final class MapUtils {
+
+    private MapUtils() {}
 
     /**
      * Puts entries from the {@code source} map into the {@code target} map, but without overriding

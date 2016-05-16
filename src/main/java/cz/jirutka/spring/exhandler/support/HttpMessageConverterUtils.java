@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2014-2016 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class HttpMessageConverterUtils {
+public final class HttpMessageConverterUtils {
 
     private static final ClassLoader CLASSLOADER = HttpMessageConverterUtils.class.getClassLoader();
+
+    private HttpMessageConverterUtils() {}
 
     /**
      * Determine whether a JAXB binder is present on the classpath and can be loaded. Will return
