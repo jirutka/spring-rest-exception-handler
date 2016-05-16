@@ -48,20 +48,12 @@ public class ValidationErrorMessage extends ErrorMessage {
     }
 
     public ValidationErrorMessage addError(String field, Object rejectedValue, String message) {
-        Error error = new Error();
-        error.field = field;
-        error.rejected = rejectedValue;
-        error.message = message;
-
-        errors.add(error);
+        errors.add(new Error(field, rejectedValue, message));
         return this;
     }
 
     public ValidationErrorMessage addError(String message) {
-        Error error = new Error();
-        error.message = message;
-
-        errors.add(error);
+        errors.add(new Error(null, null, message));
         return this;
     }
 
@@ -69,8 +61,8 @@ public class ValidationErrorMessage extends ErrorMessage {
     @Data
     @JsonInclude(NON_EMPTY)
     static class Error {
-        private String field;
-        private Object rejected;
-        private String message;
+        private final String field;
+        private final Object rejected;
+        private final String message;
     }
 }
