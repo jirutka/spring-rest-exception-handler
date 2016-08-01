@@ -60,7 +60,7 @@ public class ValidationErrorMessage extends ErrorMessage {
 
     @Data
     @JsonInclude(NON_EMPTY)
-    static class Error {
+    public static class Error {
         private final String field;
         private final Object rejected;
         private final String message;
