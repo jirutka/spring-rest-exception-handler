@@ -16,7 +16,7 @@ if [ "$TRAVIS_BRANCH" != 'master' ]; then
 	echo 'This is not the master branch, skipping deploy.'; exit 0
 fi
 
-if [ "${TRAVIS_BUILD_NUMBER}.8" != "$TRAVIS_JOB_NUMBER" ]; then
+if [ "${TRAVIS_BUILD_NUMBER}.10" != "$TRAVIS_JOB_NUMBER" ]; then
 	echo 'This is not the build job we are looking for, skipping deploy.'; exit 0
 fi
 
