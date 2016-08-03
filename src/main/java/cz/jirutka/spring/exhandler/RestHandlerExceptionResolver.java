@@ -134,10 +134,28 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
         // This attribute is never set in MockMvc, so it's not covered in integration test.
         request.removeAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
 
+        exception = resolveExceptionCause(exception);
         RestExceptionHandler<Exception, ?> handler = resolveExceptionHandler(exception.getClass());
 
         LOG.debug("Handling exception {} with response factory: {}", exception.getClass().getName(), handler);
         return handler.handleException(exception, request);
+    }
+
+    protected Exception resolveExceptionCause(Exception exception) {
+
+        Throwable lastCause = null;
+
+        for(Throwable cause = exception.getCause(); cause != null && (lastCause == null || !cause.equals(lastCause) && !cause.getClass().equals(lastCause.getClass())); cause = cause.getCause()) {
+            Class clazz1 = cause.getClass();
+            if(this.handlers.containsKey(clazz1)) {
+                return (Exception) cause;
+            }
+
+            lastCause = cause;
+        }
+
+        return exception;
+
     }
 
     @SuppressWarnings("unchecked")
