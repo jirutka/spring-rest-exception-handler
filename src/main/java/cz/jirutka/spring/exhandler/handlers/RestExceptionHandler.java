@@ -18,6 +18,7 @@ package cz.jirutka.spring.exhandler.handlers;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Contract for classes generating a {@link ResponseEntity} for an instance of the specified
@@ -37,4 +38,17 @@ public interface RestExceptionHandler<E extends Exception, T> {
      * @return A response entity.
      */
     ResponseEntity<T> handleException(E exception, HttpServletRequest request);
+    
+    
+    /**
+     * Handles exception and generates {@link ResponseEntity}.
+     *
+     * @param exception The exception to handle and get data from.
+     * @param request The current request.
+     * @param response The current response.
+     * @return A response entity.
+     */
+    default ResponseEntity<T> handleException(E exception, HttpServletRequest request, HttpServletResponse response) {
+       return handleException(exception, request);
+    }
 }
