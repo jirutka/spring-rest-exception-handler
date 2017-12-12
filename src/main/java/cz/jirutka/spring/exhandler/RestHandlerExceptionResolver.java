@@ -115,7 +115,7 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
 
         ResponseEntity<?> entity;
         try {
-            entity = handleException(exception, request);
+            entity = handleException(exception, request, response);
         } catch (NoExceptionHandlerFoundException ex) {
             LOG.warn("No exception handler found to handle exception: {}", exception.getClass().getName());
             return null;
@@ -129,7 +129,7 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
         return new ModelAndView();
     }
 
-    protected ResponseEntity<?> handleException(Exception exception, HttpServletRequest request) {
+    protected ResponseEntity<?> handleException(Exception exception, HttpServletRequest request, HttpServletResponse response) {
         // See http://stackoverflow.com/a/12979543/2217862
         // This attribute is never set in MockMvc, so it's not covered in integration test.
         request.removeAttribute(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
@@ -137,7 +137,7 @@ public class RestHandlerExceptionResolver extends AbstractHandlerExceptionResolv
         RestExceptionHandler<Exception, ?> handler = resolveExceptionHandler(exception.getClass());
 
         LOG.debug("Handling exception {} with response factory: {}", exception.getClass().getName(), handler);
-        return handler.handleException(exception, request);
+        return handler.handleException(exception, request, response);
     }
 
     @SuppressWarnings("unchecked")
