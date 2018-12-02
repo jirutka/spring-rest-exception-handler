@@ -234,8 +234,8 @@ public class RestHandlerExceptionResolverBuilder {
 
         // this class does not exist in Spring 5
         if (ClassUtils.isPresent(
-		    "org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException",
-			getClass().getClassLoader())) {
+            "org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException",
+            getClass().getClassLoader())) {
             map.put( NoSuchRequestHandlingMethodException.class, new NoSuchRequestHandlingMethodExceptionHandler() );
         }
         map.put( HttpRequestMethodNotSupportedException.class, new HttpRequestMethodNotSupportedExceptionHandler() );
