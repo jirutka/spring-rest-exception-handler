@@ -18,8 +18,7 @@ awsDockerNode(app_name, flavor, worker_image) {
     }
 
     stage("Compile and test") {
-        mavenw("versions:set -DnewVersion='${version}'")
-        mavenw("clean verify")
+        mavenw("versions:set -DnewVersion='${version}'", "clean verify")
 
         stage("Publish JUnit test result report") {
             junit '**/target/surefire-reports/TEST-*.xml'
@@ -28,7 +27,6 @@ awsDockerNode(app_name, flavor, worker_image) {
     }
 
     stageWhen('Publish ', full_workflow) {
-        mavenw("versions:set -DnewVersion='${version}'")
-        mavenw("deploy -pl ${app_name} -DskipTests -am")
+        mavenw("versions:set -DnewVersion='${version}'", "deploy -DskipTests -am")
     }
 }
