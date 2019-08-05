@@ -4,7 +4,7 @@
 
 def app_name = "spring-rest-exception-handler"
 
-def worker_image = "edgelab/jenkins-worker:42"
+def worker_image = "edgelab/jenkins-worker:v11.4.2"
 def flavor = "default"
 
 def version = version()
