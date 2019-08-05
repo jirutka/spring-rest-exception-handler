@@ -27,6 +27,6 @@ awsDockerNode(app_name, flavor, worker_image) {
     }
 
     stageWhen('Publish ', full_workflow) {
-        mavenw("versions:set -DnewVersion='${version}'", "deploy -DskipTests -am")
+        mavenw("versions:set -DnewVersion='${version}'", "deploy -DskipTests -Dgpg.skip -am")
     }
 }
