@@ -13,7 +13,7 @@
 
     <!--//////////////////// ABOUT ////////////////////-->
 
-    <groupId>ch.edgelab</groupId>
+    <groupId>com.edgelab</groupId>
     <artifactId>spring-rest-exception-handler</artifactId>
     <version>1.3.0</version>
     <packaging>jar</packaging>
