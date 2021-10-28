@@ -10,6 +10,16 @@
         <version>1.3.2</version>
     </parent>
 
+    <properties>
+        <java.version>1.8</java.version>
+        <lombok.version>1.18.22</lombok.version>
+        <groovy.version>3.0.9</groovy.version>
+        <groovy-compiler.version>3.7.0</groovy-compiler.version>
+        <groovy-batch.version>3.0.8-01</groovy-batch.version>
+        <spock.version>2.0-groovy-3.0</spock.version>
+        <gpg.skip>true</gpg.skip>
+    </properties>
+
 
     <!--//////////////////// ABOUT ////////////////////-->
 
@@ -44,12 +54,10 @@
 
     <distributionManagement>
         <repository>
-            <id>release</id>
-            <name>${artifactory.release}</name>
-            <url>${artifactory.url}/${artifactory.release}</url>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/edgelaboratories/${project.artifactId}</url>
         </repository>
     </distributionManagement>
-
 
     <!--//////////////////// DEPENDENCIES ////////////////////-->
 
@@ -197,5 +205,49 @@
             <artifactId>hibernate-validator</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.0</version>
+        </dependency>
+
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <compilerId>groovy-eclipse-compiler</compilerId>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>${groovy-compiler.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>${groovy-batch.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
