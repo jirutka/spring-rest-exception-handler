@@ -18,7 +18,7 @@ node('default') {
       mavenw("versions:set -DnewVersion='${version}'", "clean verify")
 
       stage("Publish JUnit test result report") {
-        junit '**/target/surefire-reports/TEST-*.xml'
+        junit testResults: '**/target/surefire-reports/TEST-*.xml', allowEmptyResults: true
         junit testResults: '**/target/failsafe-reports/TEST-*.xml', allowEmptyResults: true
       }
     }
