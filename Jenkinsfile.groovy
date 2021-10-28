@@ -1,6 +1,6 @@
 #!groovy
 
-@Library('EdgeLabJenkins@master') _
+@Library('EdgeLabJenkins') _
 
 def version = version()
 def full_workflow = (env.BRANCH_NAME == 'master')
@@ -8,7 +8,7 @@ def full_workflow = (env.BRANCH_NAME == 'master')
 def maven_image = "maven:3.6.1-jdk-8-slim"
 
 node('default') {
-  // Common steps for every jobs:
+
   stage('Checkout branch') {
     checkout scm
   }
@@ -23,8 +23,10 @@ node('default') {
       }
     }
 
-    stageWhen('Publish ', full_workflow) {
-      mavenw("versions:set -DnewVersion='${version}'", "deploy -DskipTests -Dgpg.skip -am")
+    stageWhen('Deploy artifact', full_workflow) {
+      configFileProvider([configFile(fileId: 'maven-external', variable: 'MAVEN_SETTINGS')]) {
+          sh "mvn --batch-mode --settings ${env.MAVEN_SETTINGS} deploy -DskipTests -Dgpg.skip -am"
+      }
     }
   }
 }
