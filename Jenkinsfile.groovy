@@ -22,11 +22,5 @@ node('default') {
         junit testResults: '**/target/failsafe-reports/TEST-*.xml', allowEmptyResults: true
       }
     }
-
-    stageWhen('Deploy artifact', full_workflow) {
-      configFileProvider([configFile(fileId: 'maven-external', variable: 'MAVEN_SETTINGS')]) {
-          sh "mvn --batch-mode --settings ${env.MAVEN_SETTINGS} deploy -DskipTests -Dgpg.skip -am"
-      }
-    }
   }
 }
