@@ -17,7 +17,6 @@
         <groovy-compiler.version>3.7.0</groovy-compiler.version>
         <groovy-batch.version>3.0.8-01</groovy-batch.version>
         <spock.version>2.0-groovy-3.0</spock.version>
-        <gpg.skip>true</gpg.skip>
     </properties>
 
 
