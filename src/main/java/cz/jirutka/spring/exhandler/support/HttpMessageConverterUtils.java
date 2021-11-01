@@ -74,8 +74,6 @@ public final class HttpMessageConverterUtils {
      *     <li>{@linkplain ResourceHttpMessageConverter}</li>
      *     <li>{@linkplain Jaxb2RootElementHttpMessageConverter} (when JAXB is present)</li>
      *     <li>{@linkplain MappingJackson2HttpMessageConverter} (when Jackson 2.x is present)</li>
-     *     <li>{@linkplain org.springframework.http.converter.json.MappingJacksonHttpMessageConverter}
-     *         (when Jackson 1.x is present and 2.x not)</li>
      * </ul>
      *
      * <p>Note: It does not return all of the default converters defined in Spring, but just thus

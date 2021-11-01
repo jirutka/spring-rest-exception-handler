@@ -32,7 +32,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExc
 import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT
 import static org.springframework.http.MediaType.APPLICATION_JSON
 
-@ContextConfiguration(classes=ContextConfig)
+@ContextConfiguration(classes=JavaConfigurationIT.ContextConfig)
 class JavaConfigurationIT extends AbstractConfigurationIT {
 
     @EnableWebMvc

@@ -24,7 +24,6 @@ import org.springframework.mock.web.MockHttpServletRequest
 import spock.lang.Shared
 import spock.lang.Specification
 
-import static ErrorMessageRestExceptionHandler.DEFAULT_PREFIX
 import static java.util.Locale.ENGLISH
 import static java.util.Locale.JAPANESE
 import static org.springframework.http.HttpStatus.BAD_REQUEST
@@ -99,7 +98,7 @@ class ErrorMessageRestExceptionHandlerTest extends Specification {
         then:
             1 * messageSource.getMessage("${exceptionClass.name}.type", null, _, ENGLISH) >> null
         then:
-            1 * messageSource.getMessage("${DEFAULT_PREFIX}.type", null, _, ENGLISH) >> expected
+            1 * messageSource.getMessage("${ErrorMessageRestExceptionHandler.DEFAULT_PREFIX}.type", null, _, ENGLISH) >> expected
         and:
             actual == expected
     }
