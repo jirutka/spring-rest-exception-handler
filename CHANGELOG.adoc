@@ -2,6 +2,9 @@
 :repo-uri: https://github.com/jirutka/spring-rest-exception-handler
 :issue-uri: {repo-uri}/issues
 
+== 1.3.0 (2017-12-13)
+* Added support to access the `HttpServletResponse` in 
+
 == 1.2.0 (2015-05-16)
 
 * Modify `ErrorMessageRestExceptionHandler` to log missing message on the DEBUG level instead of INFO.
